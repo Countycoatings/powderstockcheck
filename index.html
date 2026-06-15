@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>StockCheck</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-900 antialiased pb-12">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white pt-8 pb-4 px-4 sticky top-0 shadow-md z-10">
+        <div class="flex justify-between items-center max-w-md mx-auto">
+            <h1 class="text-xl font-bold tracking-tight">StockCheck</h1>
+            <button onclick="toggleModal(true)" class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-1.5 px-3 rounded-lg text-sm transition">
+                + Add Item
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Mobile Container -->
+    <main class="max-w-md mx-auto p-4 space-y-4">
+        
+        <!-- Search Bar -->
+        <div class="relative">
+            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search items or SKUs..." 
+                   class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 pl-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+            <span class="absolute left-3 top-3.5 text-gray-400">🔍</span>
+        </div>
+
+        <!-- Stock List Container -->
+        <div id="stockList" class="space-y-3">
+            <!-- Items injected by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div id="addModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl animate-fade-in">
+            <h3 class="text-lg font-bold mb-4">Add New Stock Item</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Item Name</label>
+                    <input type="text" id="itemName" class="w-full border border-gray-300 rounded-lg p-2 text-base">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">SKU / ID</label>
+                    <input type="text" id="itemSku" class="w-full border border-gray-300 rounded-lg p-2 text-base">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Initial Quantity</label>
+                    <input type="number" id="itemQty" value="0" class="w-full border border-gray-300 rounded-lg p-2 text-base">
+                </div>
+            </div>
+            <div class="flex space-x-3 mt-6">
+                <button onclick="toggleModal(false)" class="w-1/2 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium">Cancel</button>
+                <button onclick="addItem()" class="w-1/2 bg-blue-600 text-white py-2.5 rounded-lg font-medium">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic -->
+    <script>
+        // Seed default sample data if empty
+        let inventory = JSON.parse(localStorage.getItem('inventory')) || [
+            { id: "1", name: "iPhone 15 Pro Case", sku: "SKU-1001", qty: 24 },
+            { id: "2", name: "Anker USB-C Cable", sku: "SKU-1002", qty: 110 },
+            { id: "3", name: "MagSafe Wireless Pad", sku: "SKU-1003", qty: 8 }
+        ];
+
+        function saveToStorage() {
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+        }
+
+        function toggleModal(show) {
+            document.getElementById('addModal').classList.toggle('hidden', !show);
+            if(!show) {
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemSku').value = '';
+                document.getElementById('itemQty').value = '0';
+            }
+        }
+
+        function addItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const sku = document.getElementById('itemSku').value.trim();
+            const qty = parseInt(document.getElementById('itemQty').value) || 0;
+
+            if (!name) return alert('Item name is required.');
+
+            inventory.push({
+                id: Date.now().toString(),
+                name: name,
+                sku: sku || 'N/A',
+                qty: qty
+            });
+
+            saveToStorage();
+            renderStock();
+            toggleModal(false);
+        }
+
+        function updateQty(id, change) {
+            const item = inventory.find(i => i.id === id);
+            if (item) {
+                item.qty = Math.max(0, item.qty + change); // Prevents negative stock
+                saveToStorage();
+                renderStock();
+            }
+        }
+
+        function deleteItem(id) {
+            if(confirm("Delete this item permanently?")) {
+                inventory = inventory.filter(i => i.id !== id);
+                saveToStorage();
+                renderStock();
+            }
+        }
+
+        function renderStock() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('stockList');
+            container.innerHTML = '';
+
+            const filtered = inventory.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) || 
+                item.sku.toLowerCase().includes(searchTerm)
+            );
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No items found matching your search.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-2xl shadow-xs border border-gray-100 flex justify-between items-center";
+                card.innerHTML = `
+                    <div class="space-y-1 pr-2 max-w-[60%]">
+                        <h4 class="font-semibold text-gray-900 text-base leading-tight break-words">${item.name}</h4>
+                        <p class="text-xs text-gray-400 font-mono">SKU: ${item.sku}</p>
+                        <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 pt-1 block hover:underline">Remove</button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updateQty('${item.id}', -1)" class="w-10 h-10 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-lg text-gray-600 flex items-center justify-center">-</button>
+                        <span class="w-12 text-center font-bold text-lg text-blue-600">${item.qty}</span>
+                        <button onclick="updateQty('${item.id}', 1)" class="w-10 h-10 bg-blue-50 active:bg-blue-100 rounded-xl font-bold text-lg text-blue-600 flex items-center justify-center">+</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initial setup run
+        renderStock();
+    </script>
+</body>
+</html>
