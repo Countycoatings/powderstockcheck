@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>County Coatings Powder Stock</title>
+    <title>County Stock</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
+        /* Clean printing layout rules */
+        @media print {
+            body { background: white; color: black; padding-bottom: 0; }
+            header, .no-print { display: none !important; }
+            main { max-width: 100% !important; padding: 0 !important; }
+            .print-table { display: table !important; width: 100%; border-collapse: collapse; }
+            .print-table th, .print-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900 antialiased pb-12">
 
-    <!-- Header -->
-    <header class="bg-slate-800 text-white pt-8 pb-4 px-4 sticky top-0 shadow-md z-10">
+    <header id="appHeader" class="bg-slate-800 text-white pt-8 pb-4 px-4 sticky top-0 shadow-md z-10">
         <div class="flex justify-between items-center max-w-md mx-auto">
             <div>
                 <h1 class="text-xl font-bold tracking-tight">County Coatings</h1>
@@ -26,23 +33,52 @@
         </div>
     </header>
 
-    <!-- Main Mobile Container -->
-    <main class="max-w-md mx-auto p-4 space-y-4">
+    <main id="appMain" class="max-w-md mx-auto p-4 space-y-4">
         
-        <!-- Search Bar -->
-        <div class="relative">
-            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL, finish, name..." 
-                   class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 pl-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 text-base">
-            <span class="absolute left-3 top-3.5 text-gray-400">🔍</span>
+        <div class="grid grid-cols-3 gap-2">
+            <div class="relative col-span-2">
+                <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL..." 
+                       class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pl-9 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 text-base">
+                <span class="absolute left-3 top-3 text-gray-400">🔍</span>
+            </div>
+            <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl text-xs shadow-sm active:bg-slate-600 transition flex items-center justify-center gap-1">
+                📄 Stock Sheet
+            </button>
         </div>
 
-        <!-- Stock List Container -->
         <div id="stockList" class="space-y-3">
-            <!-- Powder items injected by JavaScript -->
-        </div>
+            </div>
     </main>
 
-    <!-- Add Item Modal -->
+    <div id="printView" class="hidden max-w-md mx-auto p-6 bg-white min-h-screen shadow-md space-y-6">
+        <div class="no-print flex justify-between items-center border-b border-gray-200 pb-4">
+            <button onclick="switchToAppView()" class="text-sm font-semibold text-slate-600 flex items-center gap-1">← Back to Editor</button>
+            <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm active:bg-blue-500">🖨️ Print from Phone</button>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-black text-slate-900">County Coatings</h2>
+            <p class="text-sm text-slate-500 font-medium">Available Inventory Stock Sheet</p>
+            <p id="printDate" class="text-xs text-slate-400 font-mono mt-1"></p>
+        </div>
+
+        <table class="w-full text-sm text-left border-collapse">
+            <thead>
+                <tr class="border-b border-slate-300 text-slate-500 text-xs uppercase tracking-wider">
+                    <th class="py-2 font-bold">Powder Variant / RAL</th>
+                    <th class="py-2 font-bold text-center">Finish</th>
+                    <th class="py-2 font-bold text-right">In Stock (Boxes)</th>
+                </tr>
+            </thead>
+            <tbody id="printTableBody" class="divide-y divide-gray-100">
+                </tbody>
+        </table>
+        
+        <div id="printEmptyMessage" class="hidden text-center py-8 text-gray-400 text-sm">
+            No stock recorded yet. All quantities are currently at 0.00.
+        </div>
+    </div>
+
     <div id="addModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
             <h3 class="text-lg font-bold mb-4">Add New Powder</h3>
@@ -57,7 +93,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Current Stock (Boxes)</label>
-                    <input type="number" id="itemQty" value="2" class="w-full border border-gray-300 rounded-lg p-2 text-base">
+                    <input type="number" id="itemQty" value="0.00" step="0.25" class="w-full border border-gray-300 rounded-lg p-2 text-base">
                 </div>
             </div>
             <div class="flex space-x-3 mt-6">
@@ -67,29 +103,28 @@
         </div>
     </div>
 
-    <!-- App Logic -->
     <script>
-        // Pre-loaded County Coatings Inventory
+        // Core list preset to 0.00 boxes per request
         const defaultPowders = [
-            { id: "p1", name: "Axalta Steel Prime", finish: "Primer", qty: 2 },
-            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 2 },
-            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 2 },
-            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 2 },
-            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 2 },
-            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 2 },
-            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 2 },
-            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 2 },
-            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 2 },
-            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 2 },
-            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 2 },
-            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 2 },
-            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 2 },
-            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 2 },
-            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 2 },
-            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 2 },
-            { id: "p17", name: "BS08E51", finish: "Gloss", qty: 2 },
-            { id: "p18", name: "Sands Orange", finish: "Specialty", qty: 2 },
-            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 2 }
+            { id: "p1", name: "Axalta Steel Prime", finish: "Primer", qty: 0.00 },
+            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.00 },
+            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.00 },
+            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.00 },
+            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.00 },
+            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 0.00 },
+            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 0.00 },
+            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 0.00 },
+            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 0.00 },
+            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 0.00 },
+            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 0.00 },
+            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 0.00 },
+            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 0.00 },
+            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.00 },
+            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.00 },
+            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.00 },
+            { id: "p17", name: "BS08E51", finish: "Gloss", qty: 0.00 },
+            { id: "p18", name: "Sands Orange", finish: "Specialty", qty: 0.00 },
+            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.00 }
         ];
 
         let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || defaultPowders;
@@ -103,14 +138,14 @@
             if(!show) {
                 document.getElementById('itemName').value = '';
                 document.getElementById('itemFinish').value = '';
-                document.getElementById('itemQty').value = '2';
+                document.getElementById('itemQty').value = '0.00';
             }
         }
 
         function addItem() {
             const name = document.getElementById('itemName').value.trim();
             const finish = document.getElementById('itemFinish').value.trim();
-            const qty = parseInt(document.getElementById('itemQty').value) || 0;
+            const qty = parseFloat(document.getElementById('itemQty').value) || 0;
 
             if (!name) return alert('Powder name or RAL code is required.');
 
@@ -118,7 +153,7 @@
                 id: Date.now().toString(),
                 name: name,
                 finish: finish || 'Standard',
-                qty: qty
+                qty: Math.round(qty * 100) / 100
             });
 
             saveToStorage();
@@ -129,7 +164,8 @@
         function updateQty(id, change) {
             const item = inventory.find(i => i.id === id);
             if (item) {
-                item.qty = Math.max(0, item.qty + change);
+                let currentNew = Math.round((item.qty + change) * 100) / 100;
+                item.qty = Math.max(0, currentNew);
                 saveToStorage();
                 renderStock();
             }
@@ -159,26 +195,63 @@
             }
 
             filtered.forEach(item => {
-                const isLow = item.qty <= 1;
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl shadow-xs border border-gray-100 flex justify-between items-center";
                 card.innerHTML = `
-                    <div class="space-y-1 pr-2 max-w-[60%]">
+                    <div class="space-y-1 pr-2 max-w-[55%]">
                         <h4 class="font-bold text-slate-800 text-base leading-tight">${item.name}</h4>
-                        <div class="flex items-center gap-2">
+                        <div>
                             <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${item.finish}</span>
-                            ${isLow ? '<span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Low Stock</span>' : ''}
                         </div>
                         <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 pt-2 block hover:underline">Delete</button>
                     </div>
-                    <div class="flex items-center space-x-2.5">
-                        <button onclick="updateQty('${item.id}', -1)" class="w-11 h-11 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-xl text-gray-600 flex items-center justify-center">-</button>
-                        <span class="w-10 text-center font-black text-xl ${isLow ? 'text-amber-600' : 'text-slate-800'}">${item.qty}</span>
-                        <button onclick="updateQty('${item.id}', 1)" class="w-11 h-11 bg-slate-800 active:bg-slate-700 rounded-xl font-bold text-xl text-white flex items-center justify-center">+</button>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="updateQty('${item.id}', -0.25)" class="w-12 h-12 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-xl text-gray-600 flex items-center justify-center">-0.25</button>
+                        <span class="w-14 text-center font-black text-lg ${item.qty === 0 ? 'text-gray-300' : 'text-slate-800'}">${item.qty.toFixed(2)}</span>
+                        <button onclick="updateQty('${item.id}', 0.25)" class="w-12 h-12 bg-slate-800 active:bg-slate-700 rounded-xl font-bold text-base text-white flex items-center justify-center">+0.25</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // --- NEW PRINT & REPORT VIEWS ---
+        function switchToPrintView() {
+            document.getElementById('appHeader').classList.add('hidden');
+            document.getElementById('appMain').classList.add('hidden');
+            document.getElementById('printView').classList.remove('hidden');
+            
+            // Set date stamp
+            document.getElementById('printDate').innerText = "Generated: " + new Date().toLocaleString();
+
+            // Populate table only with items that have stock > 0
+            const tableBody = document.getElementById('printTableBody');
+            tableBody.innerHTML = '';
+            
+            const inStockItems = inventory.filter(item => item.qty > 0);
+            
+            if(inStockItems.length === 0) {
+                document.getElementById('printEmptyMessage').classList.remove('hidden');
+            } else {
+                document.getElementById('printEmptyMessage').classList.add('hidden');
+                inStockItems.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.className = "border-b border-gray-100 text-sm";
+                    row.innerHTML = `
+                        <td class="py-3 font-bold text-slate-800">${item.name}</td>
+                        <td class="py-3 text-center text-slate-600">${item.finish}</td>
+                        <td class="py-3 text-right font-mono font-bold text-slate-900">${item.qty.toFixed(2)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        function switchToAppView() {
+            document.getElementById('printView').classList.add('hidden');
+            document.getElementById('appHeader').classList.remove('hidden');
+            document.getElementById('appMain').classList.remove('hidden');
+            renderStock();
         }
 
         // Run on load
