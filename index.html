@@ -9,10 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
-        /* Clean printing layout rules */
         @media print {
             body { background: white; color: black; padding-bottom: 0; }
-            header, .no-print { display: none !important; }
+            .no-print, #frozenHeader { display: none !important; }
             main { max-width: 100% !important; padding: 0 !important; }
             .print-table { display: table !important; width: 100%; border-collapse: collapse; }
             .print-table th, .print-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
@@ -21,35 +20,40 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-900 antialiased pb-12">
 
-    <header id="appHeader" class="bg-slate-800 text-white pt-8 pb-4 px-4 sticky top-0 shadow-md z-10">
-        <div class="flex justify-between items-center max-w-md mx-auto">
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">County Coatings</h1>
-                <p class="text-xs text-slate-400">Powder Stock Control</p>
+    <!-- FROZEN HEADER BAR -->
+    <div id="frozenHeader" class="sticky top-0 bg-gray-100 z-30 max-w-md mx-auto w-full">
+        <header class="bg-slate-800 text-white pt-8 pb-4 px-4 shadow-md">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">County Coatings</h1>
+                    <p class="text-xs text-slate-400">Powder Stock Control</p>
+                </div>
             </div>
-            <button onclick="toggleModal(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-1.5 px-3 rounded-lg text-sm transition">
-                + Add Powder
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <main id="appMain" class="max-w-md mx-auto p-4 space-y-4">
-        
-        <div class="grid grid-cols-3 gap-2">
-            <div class="relative col-span-2">
-                <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL..." 
-                       class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pl-9 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 text-base">
-                <span class="absolute left-3 top-3 text-gray-400">🔍</span>
+        <!-- Search & View Sheet Row -->
+        <div class="p-4 bg-gray-100 border-b border-gray-200 shadow-xs">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="relative col-span-2">
+                    <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL..." 
+                           class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pl-9 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 text-base">
+                    <span class="absolute left-3 top-3 text-gray-400">🔍</span>
+                </div>
+                <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl text-xs shadow-sm active:bg-slate-600 transition flex items-center justify-center gap-1">
+                    📄 Stock Sheet
+                </button>
             </div>
-            <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl text-xs shadow-sm active:bg-slate-600 transition flex items-center justify-center gap-1">
-                📄 Stock Sheet
-            </button>
         </div>
+    </div>
 
-        <div id="stockList" class="space-y-3">
-            </div>
+    <!-- Main Mobile Container -->
+    <main id="appMain" class="max-w-md mx-auto px-4 pb-8 space-y-3">
+        <div id="stockList" class="space-y-3 pt-2">
+            <!-- Powder items injected by JavaScript -->
+        </div>
     </main>
 
+    <!-- Print / Stock Sheet View -->
     <div id="printView" class="hidden max-w-md mx-auto p-6 bg-white min-h-screen shadow-md space-y-6">
         <div class="no-print flex justify-between items-center border-b border-gray-200 pb-4">
             <button onclick="switchToAppView()" class="text-sm font-semibold text-slate-600 flex items-center gap-1">← Back to Editor</button>
@@ -71,7 +75,8 @@
                 </tr>
             </thead>
             <tbody id="printTableBody" class="divide-y divide-gray-100">
-                </tbody>
+                <!-- In-stock rows dynamically generated here -->
+            </tbody>
         </table>
         
         <div id="printEmptyMessage" class="hidden text-center py-8 text-gray-400 text-sm">
@@ -79,86 +84,43 @@
         </div>
     </div>
 
-    <div id="addModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
-            <h3 class="text-lg font-bold mb-4">Add New Powder</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Powder Name / RAL</label>
-                    <input type="text" id="itemName" placeholder="e.g., RAL 7016" class="w-full border border-gray-300 rounded-lg p-2 text-base">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Finish (Optional)</label>
-                    <input type="text" id="itemFinish" placeholder="e.g., Matt, Gloss, Satin" class="w-full border border-gray-300 rounded-lg p-2 text-base">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Current Stock (Boxes)</label>
-                    <input type="number" id="itemQty" value="0.00" step="0.25" class="w-full border border-gray-300 rounded-lg p-2 text-base">
-                </div>
-            </div>
-            <div class="flex space-x-3 mt-6">
-                <button onclick="toggleModal(false)" class="w-1/2 bg-gray-200 text-gray-700 py-2.5 rounded-lg font-medium">Cancel</button>
-                <button onclick="addItem()" class="w-1/2 bg-slate-800 text-white py-2.5 rounded-lg font-medium">Save Powder</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- App Logic -->
     <script>
-        // Core list preset to 0.00 boxes per request
         const defaultPowders = [
-            { id: "p1", name: "Axalta Steel Prime", finish: "Primer", qty: 0.00 },
-            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.00 },
-            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.00 },
-            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.00 },
-            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.00 },
-            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 0.00 },
-            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 0.00 },
-            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 0.00 },
-            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 0.00 },
-            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 0.00 },
-            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 0.00 },
-            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 0.00 },
-            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 0.00 },
-            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.00 },
-            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.00 },
-            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.00 },
-            { id: "p17", name: "BS08E51", finish: "Gloss", qty: 0.00 },
-            { id: "p18", name: "Sands Orange", finish: "Specialty", qty: 0.00 },
-            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.00 }
+            { id: "p1", name: "Axalta Steel Prime", finish: "Primer", qty: 0.00, isPrimer: true },
+            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 0.00, isPrimer: false },
+            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.00, isPrimer: false },
+            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.00, isPrimer: false },
+            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p17", name: "BS08E51", finish: "Gloss", qty: 0.00, isPrimer: false },
+            { id: "p18", name: "Sands Orange", finish: "Specialty", qty: 0.00, isPrimer: false },
+            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.00, isPrimer: false }
         ];
 
         let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || defaultPowders;
 
-        function saveToStorage() {
+        // Sync structure if updates happen
+        if (inventory.length !== defaultPowders.length || !('isPrimer' in inventory[0])) {
+            inventory = defaultPowders.map(item => {
+                const existing = inventory.find(i => i.name === item.name && i.finish === item.finish);
+                return existing ? { ...item, qty: existing.qty } : item;
+            });
             localStorage.setItem('cc_inventory', JSON.stringify(inventory));
         }
 
-        function toggleModal(show) {
-            document.getElementById('addModal').classList.toggle('hidden', !show);
-            if(!show) {
-                document.getElementById('itemName').value = '';
-                document.getElementById('itemFinish').value = '';
-                document.getElementById('itemQty').value = '0.00';
-            }
-        }
-
-        function addItem() {
-            const name = document.getElementById('itemName').value.trim();
-            const finish = document.getElementById('itemFinish').value.trim();
-            const qty = parseFloat(document.getElementById('itemQty').value) || 0;
-
-            if (!name) return alert('Powder name or RAL code is required.');
-
-            inventory.push({
-                id: Date.now().toString(),
-                name: name,
-                finish: finish || 'Standard',
-                qty: Math.round(qty * 100) / 100
-            });
-
-            saveToStorage();
-            renderStock();
-            toggleModal(false);
+        function saveToStorage() {
+            localStorage.setItem('cc_inventory', JSON.stringify(inventory));
         }
 
         function updateQty(id, change) {
@@ -166,14 +128,6 @@
             if (item) {
                 let currentNew = Math.round((item.qty + change) * 100) / 100;
                 item.qty = Math.max(0, currentNew);
-                saveToStorage();
-                renderStock();
-            }
-        }
-
-        function deleteItem(id) {
-            if(confirm("Remove this powder coating variant permanently?")) {
-                inventory = inventory.filter(i => i.id !== id);
                 saveToStorage();
                 renderStock();
             }
@@ -195,6 +149,10 @@
             }
 
             filtered.forEach(item => {
+                // Determine increment values based on product category
+                const incValue = item.isPrimer ? 1.0 : 0.25;
+                const incLabel = item.isPrimer ? "1" : "0.25";
+
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl shadow-xs border border-gray-100 flex justify-between items-center";
                 card.innerHTML = `
@@ -203,28 +161,24 @@
                         <div>
                             <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${item.finish}</span>
                         </div>
-                        <button onclick="deleteItem('${item.id}')" class="text-xs text-red-400 pt-2 block hover:underline">Delete</button>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button onclick="updateQty('${item.id}', -0.25)" class="w-12 h-12 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-xl text-gray-600 flex items-center justify-center">-0.25</button>
+                        <button onclick="updateQty('${item.id}', -${incValue})" class="w-12 h-12 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-sm text-gray-600 flex items-center justify-center">-${incLabel}</button>
                         <span class="w-14 text-center font-black text-lg ${item.qty === 0 ? 'text-gray-300' : 'text-slate-800'}">${item.qty.toFixed(2)}</span>
-                        <button onclick="updateQty('${item.id}', 0.25)" class="w-12 h-12 bg-slate-800 active:bg-slate-700 rounded-xl font-bold text-base text-white flex items-center justify-center">+0.25</button>
+                        <button onclick="updateQty('${item.id}', ${incValue})" class="w-12 h-12 bg-slate-800 active:bg-slate-700 rounded-xl font-bold text-sm text-white flex items-center justify-center">+${incLabel}</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // --- NEW PRINT & REPORT VIEWS ---
         function switchToPrintView() {
-            document.getElementById('appHeader').classList.add('hidden');
+            document.getElementById('frozenHeader').classList.add('hidden');
             document.getElementById('appMain').classList.add('hidden');
             document.getElementById('printView').classList.remove('hidden');
             
-            // Set date stamp
             document.getElementById('printDate').innerText = "Generated: " + new Date().toLocaleString();
 
-            // Populate table only with items that have stock > 0
             const tableBody = document.getElementById('printTableBody');
             tableBody.innerHTML = '';
             
@@ -249,12 +203,11 @@
 
         function switchToAppView() {
             document.getElementById('printView').classList.add('hidden');
-            document.getElementById('appHeader').classList.remove('hidden');
+            document.getElementById('frozenHeader').classList.remove('hidden');
             document.getElementById('appMain').classList.remove('hidden');
             renderStock();
         }
 
-        // Run on load
         renderStock();
     </script>
 </body>
