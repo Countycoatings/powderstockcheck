@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>County Stock</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
@@ -15,7 +14,7 @@
             <p class="text-xs text-slate-400">Powder Stock Control</p>
         </header>
         <div class="p-4 bg-gray-100 border-b border-gray-200 space-y-2">
-            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL, Supplier, or Code..." 
+            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search..." 
                    class="w-full bg-white border rounded-xl px-4 py-2.5 shadow-sm">
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="resetAllStock()" class="bg-amber-100 text-amber-800 font-semibold rounded-xl py-2 text-xs">🔄 Reset 0</button>
@@ -33,7 +32,7 @@
             <button onclick="switchToAppView()" class="text-sm font-semibold text-slate-600">← Back</button>
             <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold">🖨️ Print</button>
         </div>
-        <h2 class="text-xl font-black">County Coatings Inventory</h2>
+        <h2 class="text-xl font-black">Stock Sheet</h2>
         <table class="w-full text-sm mt-4 border-collapse">
             <thead>
                 <tr class="border-b text-slate-500 text-left text-xs uppercase">
@@ -49,7 +48,7 @@
     <script>
         const defaultPowders = [
             { id: "p1", name: "Primer Zerozinc", finish: "Primer", qty: 0.0, isPrimer: true, supplier: "Axalta", productCode: "2021010340090" },
-            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "-" },
+            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2025015023095" },
             { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Thermaset", productCode: "-" },
             { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2023003196097" },
             { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Thermaset", productCode: "TLP-9549-M" },
@@ -64,15 +63,12 @@
             { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875813" },
             { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875844" },
             { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875820" },
-            { id: "p17", name: "BS04E53", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Witham", productCode: "-" },
+            { id: "p17", name: "BS04E53", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Witham", productCode: "C0248" },
             { id: "p18", name: "BS08E51", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2023003354091" },
             { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021014809098" }
         ];
 
-        // Initialize and Migrate Data
         let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || [];
-        
-        // Migration: Add new fields if missing while keeping old quantities
         inventory = defaultPowders.map(item => {
             const oldItem = inventory.find(i => i.id === item.id);
             return oldItem ? { ...item, qty: oldItem.qty } : item;
@@ -80,6 +76,8 @@
         localStorage.setItem('cc_inventory', JSON.stringify(inventory));
 
         function save() { localStorage.setItem('cc_inventory', JSON.stringify(inventory)); }
+
+        function copyCode(code) { if(code !== "-") { navigator.clipboard.writeText(code); alert("Copied: " + code); } }
 
         function updateQty(id, change) {
             let item = inventory.find(i => i.id === id);
@@ -94,12 +92,12 @@
             inventory.filter(i => i.name.toLowerCase().includes(term) || (i.supplier && i.supplier.toLowerCase().includes(term)) || (i.productCode && i.productCode.includes(term))).forEach(item => {
                 const inc = item.isPrimer ? 1.0 : 0.25;
                 container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
+                    <div class="bg-white p-4 rounded-2xl border flex justify-between items-center" onclick="copyCode('${item.productCode}')">
                         <div>
                             <h4 class="font-bold text-slate-800">${item.name} <span class="text-xs font-normal text-gray-400">(${item.finish})</span></h4>
                             <p class="text-[10px] text-gray-500 uppercase">${item.supplier || ''} • ${item.productCode || '-'}</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2" onclick="event.stopPropagation()">
                             <button onclick="updateQty('${item.id}', -${inc})" class="w-10 h-10 bg-gray-100 rounded-lg font-bold">-</button>
                             <span class="w-12 text-center font-black text-lg">${item.qty.toFixed(2)}</span>
                             <button onclick="updateQty('${item.id}', ${inc})" class="w-10 h-10 bg-slate-800 text-white rounded-lg font-bold">+</button>
@@ -114,8 +112,7 @@
             document.getElementById('frozenHeader').classList.add('hidden');
             document.getElementById('appMain').classList.add('hidden');
             document.getElementById('printView').classList.remove('hidden');
-            const tbody = document.getElementById('printTableBody');
-            tbody.innerHTML = inventory.filter(i => i.qty > 0).map(i => `
+            document.getElementById('printTableBody').innerHTML = inventory.filter(i => i.qty > 0).map(i => `
                 <tr class="border-b">
                     <td class="py-3">${i.name} (${i.finish})</td>
                     <td class="py-3 text-[10px]">${i.productCode || '-'}</td>
