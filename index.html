@@ -6,15 +6,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>County Stock</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        body { -webkit-tap-highlight-color: transparent; }
-        @media print {
-            .no-print, #frozenHeader { display: none !important; }
-            main { max-width: 100% !important; padding: 0 !important; }
-            .print-table { display: table !important; width: 100%; border-collapse: collapse; }
-            .print-table th, .print-table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        }
-    </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900 pb-12">
 
@@ -25,7 +16,7 @@
         </header>
         <div class="p-4 bg-gray-100 border-b border-gray-200 space-y-2">
             <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL, Supplier, or Code..." 
-                   class="w-full bg-white border rounded-xl px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-slate-500">
+                   class="w-full bg-white border rounded-xl px-4 py-2.5 shadow-sm">
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="resetAllStock()" class="bg-amber-100 text-amber-800 font-semibold rounded-xl py-2 text-xs">🔄 Reset 0</button>
                 <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl py-2 text-xs">📄 Stock Sheet</button>
@@ -78,7 +69,15 @@
             { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021014809098" }
         ];
 
-        let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || defaultPowders;
+        // Initialize and Migrate Data
+        let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || [];
+        
+        // Migration: Add new fields if missing while keeping old quantities
+        inventory = defaultPowders.map(item => {
+            const oldItem = inventory.find(i => i.id === item.id);
+            return oldItem ? { ...item, qty: oldItem.qty } : item;
+        });
+        localStorage.setItem('cc_inventory', JSON.stringify(inventory));
 
         function save() { localStorage.setItem('cc_inventory', JSON.stringify(inventory)); }
 
@@ -92,13 +91,13 @@
             const term = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('stockList');
             container.innerHTML = '';
-            inventory.filter(i => i.name.toLowerCase().includes(term) || i.supplier.toLowerCase().includes(term) || i.productCode.includes(term)).forEach(item => {
+            inventory.filter(i => i.name.toLowerCase().includes(term) || (i.supplier && i.supplier.toLowerCase().includes(term)) || (i.productCode && i.productCode.includes(term))).forEach(item => {
                 const inc = item.isPrimer ? 1.0 : 0.25;
                 container.innerHTML += `
                     <div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
                         <div>
                             <h4 class="font-bold text-slate-800">${item.name} <span class="text-xs font-normal text-gray-400">(${item.finish})</span></h4>
-                            <p class="text-[10px] text-gray-500 uppercase">${item.supplier} • ${item.productCode}</p>
+                            <p class="text-[10px] text-gray-500 uppercase">${item.supplier || ''} • ${item.productCode || '-'}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="updateQty('${item.id}', -${inc})" class="w-10 h-10 bg-gray-100 rounded-lg font-bold">-</button>
@@ -109,7 +108,8 @@
             });
         }
 
-        function resetAllStock() { if(confirm("Reset all?")) { inventory.forEach(i => i.qty = 0); save(); renderStock(); } }
+        function resetAllStock() { if(confirm("Reset all to 0?")) { inventory.forEach(i => i.qty = 0); save(); renderStock(); } }
+        
         function switchToPrintView() {
             document.getElementById('frozenHeader').classList.add('hidden');
             document.getElementById('appMain').classList.add('hidden');
@@ -118,10 +118,11 @@
             tbody.innerHTML = inventory.filter(i => i.qty > 0).map(i => `
                 <tr class="border-b">
                     <td class="py-3">${i.name} (${i.finish})</td>
-                    <td class="py-3 text-[10px]">${i.productCode}</td>
+                    <td class="py-3 text-[10px]">${i.productCode || '-'}</td>
                     <td class="py-3 text-right font-bold">${i.qty.toFixed(2)}</td>
                 </tr>`).join('');
         }
+
         function switchToAppView() {
             document.getElementById('printView').classList.add('hidden');
             document.getElementById('frozenHeader').classList.remove('hidden');
