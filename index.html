@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>County Stock</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         body { -webkit-tap-highlight-color: transparent; }
         @media print {
-            body { background: white; color: black; padding-bottom: 0; }
             .no-print, #frozenHeader { display: none !important; }
             main { max-width: 100% !important; padding: 0 !important; }
             .print-table { display: table !important; width: 100%; border-collapse: collapse; }
@@ -18,238 +16,116 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900 antialiased pb-12">
+<body class="bg-gray-100 font-sans text-gray-900 pb-12">
 
-    <!-- FROZEN HEADER BAR -->
     <div id="frozenHeader" class="sticky top-0 bg-gray-100 z-30 max-w-md mx-auto w-full">
         <header class="bg-slate-800 text-white pt-8 pb-4 px-4 shadow-md">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight">County Coatings</h1>
-                    <p class="text-xs text-slate-400">Powder Stock Control</p>
-                </div>
-            </div>
+            <h1 class="text-xl font-bold">County Coatings</h1>
+            <p class="text-xs text-slate-400">Powder Stock Control</p>
         </header>
-
-        <!-- Search, View Sheet & Reset Controls Row -->
-        <div class="p-4 bg-gray-100 border-b border-gray-200 shadow-xs space-y-2">
-            <div class="relative">
-                <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL..." 
-                       class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pl-9 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 text-base">
-                <span class="absolute left-3 top-3 text-gray-400">🔍</span>
-            </div>
+        <div class="p-4 bg-gray-100 border-b border-gray-200 space-y-2">
+            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search RAL, Supplier, or Code..." 
+                   class="w-full bg-white border rounded-xl px-4 py-2.5 shadow-sm focus:ring-2 focus:ring-slate-500">
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="resetAllStock()" class="bg-amber-100 text-amber-800 font-semibold rounded-xl py-2 text-xs shadow-xs active:bg-amber-200 transition flex items-center justify-center gap-1">
-                    🔄 Reset All to 0
-                </button>
-                <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl py-2 text-xs shadow-xs active:bg-slate-600 transition flex items-center justify-center gap-1">
-                    📄 Stock Sheet
-                </button>
+                <button onclick="resetAllStock()" class="bg-amber-100 text-amber-800 font-semibold rounded-xl py-2 text-xs">🔄 Reset 0</button>
+                <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl py-2 text-xs">📄 Stock Sheet</button>
             </div>
         </div>
     </div>
 
-    <!-- Main Mobile Container -->
-    <main id="appMain" class="max-w-md mx-auto px-4 pb-8 space-y-3">
-        <div id="stockList" class="space-y-3 pt-1">
-            <!-- Powder items injected by JavaScript -->
-        </div>
+    <main id="appMain" class="max-w-md mx-auto px-4 pb-8 space-y-3 pt-3">
+        <div id="stockList" class="space-y-3"></div>
     </main>
 
-    <!-- Print / Stock Sheet View -->
-    <div id="printView" class="hidden max-w-md mx-auto p-6 bg-white min-h-screen shadow-md space-y-6">
-        <!-- Action Buttons -->
-        <div class="no-print flex flex-col gap-2 border-b border-gray-200 pb-4">
-            <div class="flex justify-between items-center">
-                <button onclick="switchToAppView()" class="text-sm font-semibold text-slate-600 flex items-center gap-1">← Back</button>
-                <div class="flex space-x-2">
-                    <button onclick="emailStockSheet()" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm active:bg-blue-500 flex items-center gap-1">📩 Email Dan</button>
-                    <button onclick="window.print()" class="bg-slate-800 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm active:bg-slate-700 flex items-center gap-1">🖨️ Print</button>
-                </div>
-            </div>
+    <div id="printView" class="hidden max-w-md mx-auto p-6 bg-white min-h-screen">
+        <div class="no-print flex justify-between mb-6">
+            <button onclick="switchToAppView()" class="text-sm font-semibold text-slate-600">← Back</button>
+            <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold">🖨️ Print</button>
         </div>
-
-        <div>
-            <h2 class="text-xl font-black text-slate-900">County Coatings</h2>
-            <p class="text-sm text-slate-500 font-medium">Available Inventory Stock Sheet</p>
-            <p id="printDate" class="text-xs text-slate-400 font-mono mt-1"></p>
-        </div>
-
-        <table class="w-full text-sm text-left border-collapse">
+        <h2 class="text-xl font-black">County Coatings Inventory</h2>
+        <table class="w-full text-sm mt-4 border-collapse">
             <thead>
-                <tr class="border-b border-slate-300 text-slate-500 text-xs uppercase tracking-wider">
-                    <th class="py-2 font-bold">Powder Variant / RAL</th>
-                    <th class="py-2 font-bold text-center">Finish</th>
-                    <th class="py-2 font-bold text-right">In Stock (Boxes)</th>
+                <tr class="border-b text-slate-500 text-left text-xs uppercase">
+                    <th class="py-2">Item</th>
+                    <th class="py-2">Code</th>
+                    <th class="py-2 text-right">Qty</th>
                 </tr>
             </thead>
-            <tbody id="printTableBody" class="divide-y divide-gray-100">
-                <!-- In-stock rows dynamically generated here -->
-            </tbody>
+            <tbody id="printTableBody"></tbody>
         </table>
-        
-        <div id="printEmptyMessage" class="hidden text-center py-8 text-gray-400 text-sm">
-            No stock recorded yet. All quantities are currently at 0.00.
-        </div>
     </div>
 
-    <!-- App Logic -->
     <script>
         const defaultPowders = [
-            { id: "p1", name: "Axalta Steel Prime", finish: "Primer", qty: 0.00, isPrimer: true },
-            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 0.00, isPrimer: false },
-            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.00, isPrimer: false },
-            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.00, isPrimer: false },
-            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p17", name: "BS08E51", finish: "Gloss", qty: 0.00, isPrimer: false },
-            { id: "p18", name: "Sands Orange", finish: "Specialty", qty: 0.00, isPrimer: false },
-            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.00, isPrimer: false }
+            { id: "p1", name: "Primer Zerozinc", finish: "Primer", qty: 0.0, isPrimer: true, supplier: "Axalta", productCode: "2021010340090" },
+            { id: "p2", name: "RAL 1003", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "-" },
+            { id: "p3", name: "RAL 1013", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Thermaset", productCode: "-" },
+            { id: "p4", name: "RAL 1023", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2023003196097" },
+            { id: "p5", name: "RAL 3002", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Thermaset", productCode: "TLP-9549-M" },
+            { id: "p6", name: "RAL 5017", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2027006061093" },
+            { id: "p7", name: "RAL 6001", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021006101094" },
+            { id: "p8", name: "RAL 6005", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2023003217099" },
+            { id: "p9", name: "RAL 7016", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2025000316096" },
+            { id: "p10", name: "RAL 7024", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2027006082098" },
+            { id: "p11", name: "RAL 9005", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2028000539090" },
+            { id: "p12", name: "RAL 9005", finish: "Satin", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875851" },
+            { id: "p13", name: "RAL 9005", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2028000536009" },
+            { id: "p14", name: "RAL 9010", finish: "Matt", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875813" },
+            { id: "p15", name: "RAL 9010", finish: "Satin", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875844" },
+            { id: "p16", name: "RAL 9010", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021010875820" },
+            { id: "p17", name: "BS04E53", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Witham", productCode: "-" },
+            { id: "p18", name: "BS08E51", finish: "Gloss", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2023003354091" },
+            { id: "p19", name: "Wheel Silver", finish: "Specialty", qty: 0.0, isPrimer: false, supplier: "Axalta", productCode: "2021014809098" }
         ];
 
         let inventory = JSON.parse(localStorage.getItem('cc_inventory')) || defaultPowders;
 
-        if (inventory.length !== defaultPowders.length || !('isPrimer' in inventory[0])) {
-            inventory = defaultPowders.map(item => {
-                const existing = inventory.find(i => i.name === item.name && i.finish === item.finish);
-                return existing ? { ...item, qty: existing.qty } : item;
-            });
-            localStorage.setItem('cc_inventory', JSON.stringify(inventory));
-        }
-
-        function saveToStorage() {
-            localStorage.setItem('cc_inventory', JSON.stringify(inventory));
-        }
+        function save() { localStorage.setItem('cc_inventory', JSON.stringify(inventory)); }
 
         function updateQty(id, change) {
-            const item = inventory.find(i => i.id === id);
-            if (item) {
-                let currentNew = Math.round((item.qty + change) * 100) / 100;
-                item.qty = Math.max(0, currentNew);
-                saveToStorage();
-                renderStock();
-            }
-        }
-
-        // --- NEW CONFIRMATION RESET FEATURE ---
-        function resetAllStock() {
-            const confirmReset = confirm("Are you sure you want to reset all stock counts back to 0.00?");
-            if (confirmReset) {
-                inventory = inventory.map(item => ({ ...item, qty: 0.00 }));
-                saveToStorage();
-                renderStock();
-            }
+            let item = inventory.find(i => i.id === id);
+            item.qty = Math.max(0, Math.round((item.qty + change) * 100) / 100);
+            save(); renderStock();
         }
 
         function renderStock() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const term = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('stockList');
             container.innerHTML = '';
-
-            const filtered = inventory.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) || 
-                item.finish.toLowerCase().includes(searchTerm)
-            );
-
-            if(filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No powders matching your search.</div>`;
-                return;
-            }
-
-            filtered.forEach(item => {
-                const incValue = item.isPrimer ? 1.0 : 0.25;
-                const incLabel = item.isPrimer ? "1" : "0.25";
-
-                const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-2xl shadow-xs border border-gray-100 flex justify-between items-center";
-                card.innerHTML = `
-                    <div class="space-y-1 pr-2 max-w-[55%]">
-                        <h4 class="font-bold text-slate-800 text-base leading-tight">${item.name}</h4>
+            inventory.filter(i => i.name.toLowerCase().includes(term) || i.supplier.toLowerCase().includes(term) || i.productCode.includes(term)).forEach(item => {
+                const inc = item.isPrimer ? 1.0 : 0.25;
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
                         <div>
-                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${item.finish}</span>
+                            <h4 class="font-bold text-slate-800">${item.name} <span class="text-xs font-normal text-gray-400">(${item.finish})</span></h4>
+                            <p class="text-[10px] text-gray-500 uppercase">${item.supplier} • ${item.productCode}</p>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="updateQty('${item.id}', -${incValue})" class="w-12 h-12 bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-sm text-gray-600 flex items-center justify-center">-${incLabel}</button>
-                        <span class="w-14 text-center font-black text-lg ${item.qty === 0 ? 'text-gray-300' : 'text-slate-800'}">${item.qty.toFixed(2)}</span>
-                        <button onclick="updateQty('${item.id}', ${incValue})" class="w-12 h-12 bg-slate-800 active:bg-slate-700 rounded-xl font-bold text-sm text-white flex items-center justify-center">+${incLabel}</button>
-                    </div>
-                `;
-                container.appendChild(card);
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQty('${item.id}', -${inc})" class="w-10 h-10 bg-gray-100 rounded-lg font-bold">-</button>
+                            <span class="w-12 text-center font-black text-lg">${item.qty.toFixed(2)}</span>
+                            <button onclick="updateQty('${item.id}', ${inc})" class="w-10 h-10 bg-slate-800 text-white rounded-lg font-bold">+</button>
+                        </div>
+                    </div>`;
             });
         }
 
+        function resetAllStock() { if(confirm("Reset all?")) { inventory.forEach(i => i.qty = 0); save(); renderStock(); } }
         function switchToPrintView() {
             document.getElementById('frozenHeader').classList.add('hidden');
             document.getElementById('appMain').classList.add('hidden');
             document.getElementById('printView').classList.remove('hidden');
-            
-            document.getElementById('printDate').innerText = "Generated: " + new Date().toLocaleString();
-
-            const tableBody = document.getElementById('printTableBody');
-            tableBody.innerHTML = '';
-            
-            const inStockItems = inventory.filter(item => item.qty > 0);
-            
-            if(inStockItems.length === 0) {
-                document.getElementById('printEmptyMessage').classList.remove('hidden');
-            } else {
-                document.getElementById('printEmptyMessage').classList.add('hidden');
-                inStockItems.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.className = "border-b border-gray-100 text-sm";
-                    row.innerHTML = `
-                        <td class="py-3 font-bold text-slate-800">${item.name}</td>
-                        <td class="py-3 text-center text-slate-600">${item.finish}</td>
-                        <td class="py-3 text-right font-mono font-bold text-slate-900">${item.qty.toFixed(2)}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            }
+            const tbody = document.getElementById('printTableBody');
+            tbody.innerHTML = inventory.filter(i => i.qty > 0).map(i => `
+                <tr class="border-b">
+                    <td class="py-3">${i.name} (${i.finish})</td>
+                    <td class="py-3 text-[10px]">${i.productCode}</td>
+                    <td class="py-3 text-right font-bold">${i.qty.toFixed(2)}</td>
+                </tr>`).join('');
         }
-
         function switchToAppView() {
             document.getElementById('printView').classList.add('hidden');
             document.getElementById('frozenHeader').classList.remove('hidden');
             document.getElementById('appMain').classList.remove('hidden');
-            renderStock();
-        }
-
-        function emailStockSheet() {
-            const inStockItems = inventory.filter(item => item.qty > 0);
-            
-            if (inStockItems.length === 0) {
-                alert("There are no items currently in stock to email!");
-                return;
-            }
-
-            const dateString = new Date().toLocaleDateString();
-            const subject = encodeURIComponent(`County Coatings Stock Level Report - ${dateString}`);
-            
-            let bodyText = `County Coatings Powder Inventory\n`;
-            bodyText += `Report Generated: ${new Date().toLocaleString()}\n`;
-            bodyText += `-------------------------------------------\n\n`;
-            
-            inStockItems.forEach(item => {
-                const line = `${item.name.padEnd(22)} [${item.finish.padEnd(7)}] : ${item.qty.toFixed(2)} Boxes\n`;
-                bodyText += line;
-            });
-            
-            bodyText += `\n-------------------------------------------\n`;
-            bodyText += `Sent via Mobile StockCheck.`;
-            
-            const encodedBody = encodeURIComponent(bodyText);
-            window.location.href = `mailto:dan@countycoatings.co.uk?subject=${subject}&body=${encodedBody}`;
         }
 
         renderStock();
