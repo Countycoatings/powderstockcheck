@@ -13,9 +13,8 @@
             <h1 class="text-xl font-bold">County Coatings</h1>
             <p class="text-xs text-slate-400">Powder Stock Control</p>
         </header>
-        <div class="p-4 bg-gray-100 border-b border-gray-200 space-y-2">
-            <input type="text" id="searchInput" oninput="renderStock()" placeholder="Search..." 
-                   class="w-full bg-white border rounded-xl px-4 py-2.5 shadow-sm">
+        <!-- Search box removed as requested -->
+        <div class="p-4 bg-gray-100 border-b border-gray-200">
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="resetAllStock()" class="bg-amber-100 text-amber-800 font-semibold rounded-xl py-2 text-xs">🔄 Reset 0</button>
                 <button onclick="switchToPrintView()" class="bg-slate-700 text-white font-semibold rounded-xl py-2 text-xs">📄 Stock Sheet</button>
@@ -86,10 +85,9 @@
         }
 
         function renderStock() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
             const container = document.getElementById('stockList');
             container.innerHTML = '';
-            inventory.filter(i => i.name.toLowerCase().includes(term) || (i.supplier && i.supplier.toLowerCase().includes(term)) || (i.productCode && i.productCode.includes(term))).forEach(item => {
+            inventory.forEach(item => {
                 const inc = item.isPrimer ? 1.0 : 0.25;
                 container.innerHTML += `
                     <div class="bg-white p-4 rounded-2xl border flex justify-between items-center" onclick="copyCode('${item.productCode}')">
