@@ -31,6 +31,7 @@
             <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold">🖨️ Print</button>
         </div>
         <h2 class="text-xl font-black">Stock Sheet</h2>
+        <p id="timestamp" class="text-[10px] text-gray-500 uppercase mt-1"></p>
         <table class="w-full text-sm mt-4 border-collapse">
             <thead>
                 <tr class="border-b text-slate-500 text-left text-xs uppercase">
@@ -106,6 +107,10 @@
         function resetAllStock() { if(confirm("Reset all to 0?")) { inventory.forEach(i => i.qty = 0); save(); renderStock(); } }
         
         function switchToPrintView() {
+            // Set the timestamp
+            const now = new Date();
+            document.getElementById('timestamp').innerText = "Generated: " + now.toLocaleString();
+            
             document.getElementById('frozenHeader').classList.add('hidden');
             document.getElementById('appMain').classList.add('hidden');
             document.getElementById('printView').classList.remove('hidden');
