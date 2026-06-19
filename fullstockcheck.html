@@ -108,7 +108,7 @@
       background-color: #334155;
       color: white;
       font-size: 0.95rem;
-      text-transform: uppercase; /* Forces text search bar visually to uppercase */
+      text-transform: uppercase;
     }
     .search-bar::placeholder { color: #94a3b8; text-transform: none; }
 
@@ -159,7 +159,7 @@
       background-color: #f8fafc;
       color: var(--text);
       -webkit-appearance: none;
-      text-transform: uppercase; /* Forces text fields to display everything in UPPERCASE instantly */
+      text-transform: uppercase;
     }
     .form-control::placeholder { text-transform: none; }
 
@@ -208,12 +208,12 @@
     }
 
     .btn-counter {
-      width: 48px;
+      width: 54px;
       height: 48px;
       border-radius: 8px;
       border: none;
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.1rem;
+      font-weight: 700;
       background-color: #e2e8f0;
       color: #1e293b;
       display: flex;
@@ -313,7 +313,6 @@
     });
 
     function addPowder() {
-      // Force strings completely to uppercase right before writing data storage variables
       const brand = document.getElementById('formBrand').value.trim().toUpperCase();
       const code = document.getElementById('formCode').value.trim().toUpperCase();
       const finish = document.getElementById('formFinish').value.toUpperCase();
@@ -330,6 +329,7 @@
         item.finish === finish
       );
 
+      // Keep backend rule logic intact for structural integrity
       const step = (brand === 'AXALTA' && finish === 'PRIMER') ? 1.0 : 0.25;
 
       if (existingIndex > -1) {
@@ -353,14 +353,15 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Swapped tap modifications to universally click by 0.25 
     function adjustQty(id, direction) {
       const item = inventory.find(i => i.id === id);
       if (!item) return;
 
       if (direction === 'plus') {
-        item.qty = parseFloat((item.qty + item.step).toFixed(2));
+        item.qty = parseFloat((item.qty + 0.25).toFixed(2));
       } else if (direction === 'minus') {
-        item.qty = parseFloat((item.qty - item.step).toFixed(2));
+        item.qty = parseFloat((item.qty - 0.25).toFixed(2));
         if (item.qty < 0) item.qty = 0;
       }
       saveAndRefresh();
@@ -441,12 +442,12 @@
           card.innerHTML = `
             <div class="powder-info">
               <div class="powder-title">${item.brand} - ${item.code}</div>
-              <div class="powder-meta">${item.finish} &bull; Steps: ${item.step}</div>
+              <div class="powder-meta">${item.finish}</div>
             </div>
             <div class="counter-controls">
-              <button class="btn-counter" onclick="adjustQty('${item.id}', 'minus')">-</button>
-              <input type="number" class="qty-display" value="${item.qty.toFixed(2)}" step="${item.step}" onchange="directTypeQty('${item.id}', this.value)">
-              <button class="btn-counter" onclick="adjustQty('${item.id}', 'plus')">+</button>
+              <button class="btn-counter" onclick="adjustQty('${item.id}', 'minus')">-0.25</button>
+              <input type="number" class="qty-display" value="${item.qty.toFixed(2)}" step="0.25" onchange="directTypeQty('${item.id}', this.value)">
+              <button class="btn-counter" onclick="adjustQty('${item.id}', 'plus')">+0.25</button>
             </div>
           `;
           container.appendChild(card);
