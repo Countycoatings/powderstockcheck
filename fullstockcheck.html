@@ -32,7 +32,7 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding-top: 115px; /* Leaner, perfect space for frozen top row */
+      padding-top: 115px; /* Space for frozen top row */
       padding-bottom: 40px;
     }
 
@@ -108,10 +108,11 @@
       background-color: #334155;
       color: white;
       font-size: 0.95rem;
+      text-transform: uppercase; /* Forces text search bar visually to uppercase */
     }
-    .search-bar::placeholder { color: #94a3b8; }
+    .search-bar::placeholder { color: #94a3b8; text-transform: none; }
 
-    /* --- SCROLLABLE DATA ENTRY WIDGET (STAYS IN VIEW) --- */
+    /* --- SCROLLABLE DATA ENTRY WIDGET --- */
     .entry-form-container {
       background: var(--card-bg);
       margin: 12px;
@@ -129,7 +130,6 @@
       padding-bottom: 6px;
     }
 
-    /* Stack everything cleanly 1-by-1 to stop boxes wrapping or clipping off-screen */
     .form-grid {
       display: flex;
       flex-direction: column;
@@ -158,8 +158,10 @@
       font-size: 1rem;
       background-color: #f8fafc;
       color: var(--text);
-      -webkit-appearance: none; /* Cleans up default iOS design overrides */
+      -webkit-appearance: none;
+      text-transform: uppercase; /* Forces text fields to display everything in UPPERCASE instantly */
     }
+    .form-control::placeholder { text-transform: none; }
 
     /* --- INVENTORY SHEET ROW --- */
     .list-container {
@@ -187,6 +189,7 @@
       font-weight: 700;
       font-size: 1.05rem;
       color: #0f172a;
+      text-transform: uppercase;
     }
 
     .powder-meta {
@@ -255,37 +258,37 @@
         <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
       </div>
     </div>
-    <input type="text" id="searchInput" class="search-bar" placeholder="Quick search color, RAL, brand..." oninput="renderList()">
+    <input type="text" id="searchInput" class="search-bar" placeholder="QUICK SEARCH COLOR, RAL, BRAND..." oninput="renderList()">
   </header>
 
-  <!-- WORKSHOP ENTRY WIDGET (Fully Stacked & Full Width) -->
+  <!-- WORKSHOP ENTRY WIDGET -->
   <div class="entry-form-container" id="entryForm">
     <h2>Log New Box to Sheet</h2>
     <div class="form-grid">
       <div class="form-group">
         <label>Manufacturer</label>
-        <input type="text" id="formBrand" class="form-control" placeholder="e.g. Axalta" list="brands">
+        <input type="text" id="formBrand" class="form-control" placeholder="E.G. AXALTA" list="brands">
         <datalist id="brands">
-          <option value="Axalta">
-          <option value="AkzoNobel">
-          <option value="Tiger">
-          <option value="Syntha Pulvin">
+          <option value="AXALTA">
+          <option value="AKZONOBEL">
+          <option value="TIGER">
+          <option value="SYNTHA PULVIN">
         </datalist>
       </div>
       
       <div class="form-group">
         <label>Stock Code / RAL</label>
-        <input type="text" id="formCode" class="form-control" placeholder="e.g. RAL 7016">
+        <input type="text" id="formCode" class="form-control" placeholder="E.G. RAL 7016">
       </div>
       
       <div class="form-group">
         <label>Finish / Gloss</label>
         <select id="formFinish" class="form-control">
-          <option value="Matt">Matt</option>
-          <option value="Satin">Satin</option>
-          <option value="Gloss">Gloss</option>
-          <option value="Primer">Primer</option>
-          <option value="Specialty">Specialty</option>
+          <option value="MATT">MATT</option>
+          <option value="SATIN">SATIN</option>
+          <option value="GLOSS">GLOSS</option>
+          <option value="PRIMER">PRIMER</option>
+          <option value="SPECIALTY">SPECIALTY</option>
         </select>
       </div>
       
@@ -305,15 +308,15 @@
     let currentView = "all"; 
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Establish dynamic header offset context safely
       document.body.style.paddingTop = (document.getElementById('appHeader').offsetHeight + 12) + 'px';
       renderList();
     });
 
     function addPowder() {
-      const brand = document.getElementById('formBrand').value.trim();
-      const code = document.getElementById('formCode').value.trim();
-      const finish = document.getElementById('formFinish').value;
+      // Force strings completely to uppercase right before writing data storage variables
+      const brand = document.getElementById('formBrand').value.trim().toUpperCase();
+      const code = document.getElementById('formCode').value.trim().toUpperCase();
+      const finish = document.getElementById('formFinish').value.toUpperCase();
       const qty = parseFloat(document.getElementById('formQty').value) || 0.00;
 
       if (!brand || !code) {
@@ -322,12 +325,12 @@
       }
 
       const existingIndex = inventory.findIndex(item => 
-        item.brand.toLowerCase() === brand.toLowerCase() && 
-        item.code.toLowerCase() === code.toLowerCase() && 
+        item.brand.toUpperCase() === brand && 
+        item.code.toUpperCase() === code && 
         item.finish === finish
       );
 
-      const step = (brand.toLowerCase() === 'axalta' && finish === 'Primer') ? 1.0 : 0.25;
+      const step = (brand === 'AXALTA' && finish === 'PRIMER') ? 1.0 : 0.25;
 
       if (existingIndex > -1) {
         inventory[existingIndex].qty = qty;
@@ -347,7 +350,6 @@
       document.getElementById('formCode').value = "";
       document.getElementById('formQty').value = "0.00";
       
-      // Auto scrolls window back to the top to see the newly committed item immediately
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -415,20 +417,20 @@
 
     function renderList() {
       const container = document.getElementById('powderList');
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const searchTerm = document.getElementById('searchInput').value.toUpperCase();
       container.innerHTML = "";
 
       const sortedInventory = [...inventory].sort((a, b) => {
-        if (a.brand.toLowerCase() !== b.brand.toLowerCase()) {
+        if (a.brand !== b.brand) {
           return a.brand.localeCompare(b.brand);
         }
         return a.code.localeCompare(b.code);
       });
 
       sortedInventory.forEach(item => {
-        const matchesSearch = item.brand.toLowerCase().includes(searchTerm) || 
-                              item.code.toLowerCase().includes(searchTerm) || 
-                              item.finish.toLowerCase().includes(searchTerm);
+        const matchesSearch = item.brand.includes(searchTerm) || 
+                              item.code.includes(searchTerm) || 
+                              item.finish.includes(searchTerm);
         
         const matchesView = (currentView === 'all') || (currentView === 'sheet' && item.qty > 0);
 
