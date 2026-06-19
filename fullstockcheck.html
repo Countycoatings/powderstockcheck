@@ -32,7 +32,7 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding-top: 150px; /* Space for frozen header */
+      padding-top: 115px; /* Leaner, perfect space for frozen top row */
       padding-bottom: 40px;
     }
 
@@ -50,13 +50,12 @@
     .orientation-alert h2 { font-size: 1.5rem; margin-bottom: 10px; }
     .orientation-alert p { font-size: 1rem; color: #94a3b8; }
 
-    /* Show warning ONLY when phone is flipped sideways */
     @media screen and (orientation: landscape) {
       .orientation-alert { display: block !important; }
       body { overflow: hidden; }
     }
 
-    /* --- FROZEN HEADER --- */
+    /* --- LEAN FROZEN HEADER --- */
     header {
       position: fixed;
       top: 0;
@@ -99,7 +98,7 @@
     .btn-danger { background-color: var(--danger); color: white; }
     .btn-secondary { background-color: #475569; color: white; }
     .btn-success { background-color: var(--success); color: white; }
-    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; }
+    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border-radius: 8px; margin-top: 5px; }
 
     .search-bar {
       width: 100%;
@@ -112,7 +111,7 @@
     }
     .search-bar::placeholder { color: #94a3b8; }
 
-    /* --- DATA ENTRY WIDGET --- */
+    /* --- SCROLLABLE DATA ENTRY WIDGET (STAYS IN VIEW) --- */
     .entry-form-container {
       background: var(--card-bg);
       margin: 12px;
@@ -124,15 +123,18 @@
 
     .entry-form-container h2 {
       font-size: 1rem;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       color: #0f172a;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
     }
 
+    /* Stack everything cleanly 1-by-1 to stop boxes wrapping or clipping off-screen */
     .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .form-group {
@@ -142,18 +144,21 @@
 
     .form-group label {
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       color: #64748b;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .form-control {
-      padding: 10px;
+      width: 100%;
+      padding: 12px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      font-size: 0.95rem;
+      font-size: 1rem;
       background-color: #f8fafc;
+      color: var(--text);
+      -webkit-appearance: none; /* Cleans up default iOS design overrides */
     }
 
     /* --- INVENTORY SHEET ROW --- */
@@ -224,7 +229,6 @@
       color: #0f172a;
     }
 
-    /* --- AIRPRINT STYLES --- */
     @media print {
       body { padding: 0; background: white; }
       header, .entry-form-container, .btn-counter, .orientation-alert { display: none !important; }
@@ -235,13 +239,13 @@
 </head>
 <body>
 
-  <!-- ORIENTATION ALERT FOR LANDSCAPE PROTECTION -->
+  <!-- ORIENTATION ALERT -->
   <div class="orientation-alert">
     <h2>🔄 Portrait Mode Required</h2>
     <p>Please turn your iPhone back vertically to continue checking stock.</p>
   </div>
 
-  <!-- FIXED HEADER -->
+  <!-- FIXED HEADER ROW -->
   <header id="appHeader">
     <div class="header-top">
       <h1>County Coatings</h1>
@@ -254,7 +258,7 @@
     <input type="text" id="searchInput" class="search-bar" placeholder="Quick search color, RAL, brand..." oninput="renderList()">
   </header>
 
-  <!-- DATA ENTRY WIDGET -->
+  <!-- WORKSHOP ENTRY WIDGET (Fully Stacked & Full Width) -->
   <div class="entry-form-container" id="entryForm">
     <h2>Log New Box to Sheet</h2>
     <div class="form-grid">
@@ -268,10 +272,12 @@
           <option value="Syntha Pulvin">
         </datalist>
       </div>
+      
       <div class="form-group">
         <label>Stock Code / RAL</label>
         <input type="text" id="formCode" class="form-control" placeholder="e.g. RAL 7016">
       </div>
+      
       <div class="form-group">
         <label>Finish / Gloss</label>
         <select id="formFinish" class="form-control">
@@ -282,6 +288,7 @@
           <option value="Specialty">Specialty</option>
         </select>
       </div>
+      
       <div class="form-group">
         <label>Boxes Found</label>
         <input type="number" id="formQty" class="form-control" value="0.00" step="0.25" min="0">
@@ -294,16 +301,15 @@
   <main class="list-container" id="powderList"></main>
 
   <script>
-    // State Sync (Uses a distinct storage key so it doesn't conflict with your home page app)
     let inventory = JSON.parse(localStorage.getItem('fullStockInventory')) || [];
     let currentView = "all"; 
 
     window.addEventListener('DOMContentLoaded', () => {
-      document.body.style.paddingTop = (document.getElementById('appHeader').offsetHeight + 16) + 'px';
+      // Establish dynamic header offset context safely
+      document.body.style.paddingTop = (document.getElementById('appHeader').offsetHeight + 12) + 'px';
       renderList();
     });
 
-    // Add or merge stock line item
     function addPowder() {
       const brand = document.getElementById('formBrand').value.trim();
       const code = document.getElementById('formCode').value.trim();
@@ -315,14 +321,12 @@
         return;
       }
 
-      // Merge if exact item matches
       const existingIndex = inventory.findIndex(item => 
         item.brand.toLowerCase() === brand.toLowerCase() && 
         item.code.toLowerCase() === code.toLowerCase() && 
         item.finish === finish
       );
 
-      // Enforce custom shop rule increments
       const step = (brand.toLowerCase() === 'axalta' && finish === 'Primer') ? 1.0 : 0.25;
 
       if (existingIndex > -1) {
@@ -340,9 +344,11 @@
 
       saveAndRefresh();
       
-      // Clear code field ready for the next shelf box
       document.getElementById('formCode').value = "";
       document.getElementById('formQty').value = "0.00";
+      
+      // Auto scrolls window back to the top to see the newly committed item immediately
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function adjustQty(id, direction) {
@@ -358,7 +364,6 @@
       saveAndRefresh();
     }
 
-    // Direct input box editing support
     function directTypeQty(id, value) {
       const item = inventory.find(i => i.id === id);
       if (item) {
@@ -367,7 +372,6 @@
       }
     }
 
-    // Direct Native CSV Export Engine
     function exportToCSV() {
       if (inventory.length === 0) {
         alert("No stock tracked to download yet.");
