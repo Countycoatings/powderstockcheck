@@ -36,6 +36,26 @@
       padding-bottom: 40px;
     }
 
+    /* --- PORTRAIT ONLY LOCKDOWN COVER --- */
+    .orientation-alert {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #1e293b;
+      color: white;
+      z-index: 9999;
+      text-align: center;
+      padding-top: 35%;
+    }
+    .orientation-alert h2 { font-size: 1.5rem; margin-bottom: 10px; }
+    .orientation-alert p { font-size: 1rem; color: #94a3b8; }
+
+    /* Show warning ONLY when phone is flipped sideways */
+    @media screen and (orientation: landscape) {
+      .orientation-alert { display: block !important; }
+      body { overflow: hidden; }
+    }
+
     /* --- FROZEN HEADER --- */
     header {
       position: fixed;
@@ -207,13 +227,19 @@
     /* --- AIRPRINT STYLES --- */
     @media print {
       body { padding: 0; background: white; }
-      header, .entry-form-container, .btn-counter { display: none !important; }
+      header, .entry-form-container, .btn-counter, .orientation-alert { display: none !important; }
       .powder-card { border: none; border-bottom: 1px solid #000; border-radius: 0; box-shadow: none; margin: 0; padding: 8px 0; }
       .qty-display { font-weight: bold; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ORIENTATION ALERT FOR LANDSCAPE PROTECTION -->
+  <div class="orientation-alert">
+    <h2>🔄 Portrait Mode Required</h2>
+    <p>Please turn your iPhone back vertically to continue checking stock.</p>
+  </div>
 
   <!-- FIXED HEADER -->
   <header id="appHeader">
