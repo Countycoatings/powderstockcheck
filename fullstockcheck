@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>County Coatings - Full Stock Check</title>
+  
+  <!-- Apple Web App Meta Tags for Full-Screen Mode -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Full Stock">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-top: 150px; /* Space for frozen header */
+      padding-bottom: 40px;
+    }
+
+    /* --- FROZEN HEADER --- */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #1e293b;
+      color: white;
+      padding: 12px 16px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .header-top h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .global-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .btn-danger { background-color: var(--danger); color: white; }
+    .btn-secondary { background-color: #475569; color: white; }
+    .btn-success { background-color: var(--success); color: white; }
+    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; }
+
+    .search-bar {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background-color: #334155;
+      color: white;
+      font-size: 0.95rem;
+    }
+    .search-bar::placeholder { color: #94a3b8; }
+
+    /* --- DATA ENTRY WIDGET --- */
+    .entry-form-container {
+      background: var(--card-bg);
+      margin: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+
+    .entry-form-container h2 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      background-color: #f8fafc;
+    }
+
+    /* --- INVENTORY SHEET ROW --- */
+    .list-container {
+      padding: 0 12px;
+    }
+
+    .powder-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .powder-info {
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    .powder-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #0f172a;
+    }
+
+    .powder-meta {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 2px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Chunky Touch-Target Controls */
+    .counter-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-counter {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background-color: #e2e8f0;
+      color: #1e293b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-counter:active { background-color: var(--border); }
+
+    .qty-display {
+      font-size: 1.15rem;
+      font-weight: 700;
+      width: 65px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      color: #0f172a;
+    }
+
+    /* --- AIRPRINT STYLES --- */
+    @media print {
+      body { padding: 0; background: white; }
+      header, .entry-form-container, .btn-counter { display: none !important; }
+      .powder-card { border: none; border-bottom: 1px solid #000; border-radius: 0; box-shadow: none; margin: 0; padding: 8px 0; }
+      .qty-display { font-weight: bold; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FIXED HEADER -->
+  <header id="appHeader">
+    <div class="header-top">
+      <h1>County Coatings</h1>
+      <div class="global-actions">
+        <button class="btn btn-secondary" onclick="toggleView()" id="viewToggleBtn">Sheet View</button>
+        <button class="btn btn-success" onclick="exportToCSV()">Download Excel</button>
+        <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
+      </div>
+    </div>
+    <input type="text" id="searchInput" class="search-bar" placeholder="Quick search color, RAL, brand..." oninput="renderList()">
+  </header>
+
+  <!-- DATA ENTRY WIDGET -->
+  <div class="entry-form-container" id="entryForm">
+    <h2>Log New Box to Sheet</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Manufacturer</label>
+        <input type="text" id="formBrand" class="form-control" placeholder="e.g. Axalta" list="brands">
+        <datalist id="brands">
+          <option value="Axalta">
+          <option value="AkzoNobel">
+          <option value="Tiger">
+          <option value="Syntha Pulvin">
+        </datalist>
+      </div>
+      <div class="form-group">
+        <label>Stock Code / RAL</label>
+        <input type="text" id="formCode" class="form-control" placeholder="e.g. RAL 7016">
+      </div>
+      <div class="form-group">
+        <label>Finish / Gloss</label>
+        <select id="formFinish" class="form-control">
+          <option value="Matt">Matt</option>
+          <option value="Satin">Satin</option>
+          <option value="Gloss">Gloss</option>
+          <option value="Primer">Primer</option>
+          <option value="Specialty">Specialty</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Boxes Found</label>
+        <input type="number" id="formQty" class="form-control" value="0.00" step="0.25" min="0">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="addPowder()">+ Commit Box to Sheet</button>
+  </div>
+
+  <!-- MAIN LIST VIEW -->
+  <main class="list-container" id="powderList"></main>
+
+  <script>
+    // State Sync (Uses a distinct storage key so it doesn't conflict with your home page app)
+    let inventory = JSON.parse(localStorage.getItem('fullStockInventory')) || [];
+    let currentView = "all"; 
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.style.paddingTop = (document.getElementById('appHeader').offsetHeight + 16) + 'px';
+      renderList();
+    });
+
+    // Add or merge stock line item
+    function addPowder() {
+      const brand = document.getElementById('formBrand').value.trim();
+      const code = document.getElementById('formCode').value.trim();
+      const finish = document.getElementById('formFinish').value;
+      const qty = parseFloat(document.getElementById('formQty').value) || 0.00;
+
+      if (!brand || !code) {
+        alert("Please state both the Manufacturer and Stock Code.");
+        return;
+      }
+
+      // Merge if exact item matches
+      const existingIndex = inventory.findIndex(item => 
+        item.brand.toLowerCase() === brand.toLowerCase() && 
+        item.code.toLowerCase() === code.toLowerCase() && 
+        item.finish === finish
+      );
+
+      // Enforce custom shop rule increments
+      const step = (brand.toLowerCase() === 'axalta' && finish === 'Primer') ? 1.0 : 0.25;
+
+      if (existingIndex > -1) {
+        inventory[existingIndex].qty = qty;
+      } else {
+        inventory.push({
+          id: 'p_' + Date.now(),
+          brand,
+          code,
+          finish,
+          qty,
+          step
+        });
+      }
+
+      saveAndRefresh();
+      
+      // Clear code field ready for the next shelf box
+      document.getElementById('formCode').value = "";
+      document.getElementById('formQty').value = "0.00";
+    }
+
+    function adjustQty(id, direction) {
+      const item = inventory.find(i => i.id === id);
+      if (!item) return;
+
+      if (direction === 'plus') {
+        item.qty = parseFloat((item.qty + item.step).toFixed(2));
+      } else if (direction === 'minus') {
+        item.qty = parseFloat((item.qty - item.step).toFixed(2));
+        if (item.qty < 0) item.qty = 0;
+      }
+      saveAndRefresh();
+    }
+
+    // Direct input box editing support
+    function directTypeQty(id, value) {
+      const item = inventory.find(i => i.id === id);
+      if (item) {
+        item.qty = parseFloat(value) || 0.00;
+        localStorage.setItem('fullStockInventory', JSON.stringify(inventory));
+      }
+    }
+
+    // Direct Native CSV Export Engine
+    function exportToCSV() {
+      if (inventory.length === 0) {
+        alert("No stock tracked to download yet.");
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Manufacturer,Stock Code / RAL,Finish,Boxes Total\r\n";
+
+      inventory.forEach(item => {
+        let row = `"${item.brand}","${item.code}","${item.finish}",${item.qty.toFixed(2)}`;
+        csvContent += row + "\r\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `County_Coatings_Full_Stock_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function toggleView() {
+      currentView = (currentView === 'all') ? 'sheet' : 'all';
+      document.getElementById('viewToggleBtn').innerText = (currentView === 'all') ? 'Sheet View' : 'Show All';
+      renderList();
+    }
+
+    function resetAll() {
+      if (confirm("Reset everything back to 0 items? This wipes your active device session data completely.")) {
+        inventory = [];
+        saveAndRefresh();
+      }
+    }
+
+    function saveAndRefresh() {
+      localStorage.setItem('fullStockInventory', JSON.stringify(inventory));
+      renderList();
+    }
+
+    function renderList() {
+      const container = document.getElementById('powderList');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      container.innerHTML = "";
+
+      const sortedInventory = [...inventory].sort((a, b) => {
+        if (a.brand.toLowerCase() !== b.brand.toLowerCase()) {
+          return a.brand.localeCompare(b.brand);
+        }
+        return a.code.localeCompare(b.code);
+      });
+
+      sortedInventory.forEach(item => {
+        const matchesSearch = item.brand.toLowerCase().includes(searchTerm) || 
+                              item.code.toLowerCase().includes(searchTerm) || 
+                              item.finish.toLowerCase().includes(searchTerm);
+        
+        const matchesView = (currentView === 'all') || (currentView === 'sheet' && item.qty > 0);
+
+        if (matchesSearch && matchesView) {
+          const card = document.createElement('div');
+          card.className = "powder-card";
+
+          card.innerHTML = `
+            <div class="powder-info">
+              <div class="powder-title">${item.brand} - ${item.code}</div>
+              <div class="powder-meta">${item.finish} &bull; Steps: ${item.step}</div>
+            </div>
+            <div class="counter-controls">
+              <button class="btn-counter" onclick="adjustQty('${item.id}', 'minus')">-</button>
+              <input type="number" class="qty-display" value="${item.qty.toFixed(2)}" step="${item.step}" onchange="directTypeQty('${item.id}', this.value)">
+              <button class="btn-counter" onclick="adjustQty('${item.id}', 'plus')">+</button>
+            </div>
+          `;
+          container.appendChild(card);
+        }
+      });
+
+      if (container.innerHTML === "") {
+        container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b; font-size:0.95rem;">No boxes logged yet. Use the tool above to add boxes as you walk the floor.</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
