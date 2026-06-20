@@ -83,8 +83,8 @@
     }
 
     .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+    .form-grid .form-group { display: flex; flex-direction: column; }
+    .form-grid .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
 
     .form-control {
       width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border);
@@ -95,9 +95,9 @@
       border-color: var(--primary);
     }
 
-    /* Prevent default OS keyboards from triggering on selection focus */
     .no-native-keyboard {
       caret-color: transparent;
+      cursor: pointer;
     }
 
     select.form-control option {
@@ -135,14 +135,26 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
-    /* --- THEMED CUSTOM ONSCREEN KEYPAD LAYOUT --- */
-    .custom-keypad {
+    /* --- SIDE-BY-SIDE KEYPAD INTERFACE --- */
+    .custom-keypad-layout {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 8px;
       background: var(--input-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px;
+    }
+
+    .keypad-nums {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .keypad-alpha-strip {
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
@@ -150,8 +162,8 @@
       background: #334155;
       color: var(--text);
       border: none;
-      padding: 14px 0;
-      font-size: 1.2rem;
+      padding: 16px 0;
+      font-size: 1.25rem;
       font-weight: 800;
       border-radius: 6px;
       text-align: center;
@@ -159,9 +171,15 @@
       user-select: none;
     }
     .key-btn:active { background: #475569; }
+    
     .key-btn.btn-danger { background: #7f1d1d; color: #ef4444; }
     .key-btn.btn-danger:active { background: #991b1b; }
-    .key-btn.btn-secondary { background: #1e293b; color: var(--text-muted); border: 1px solid var(--border); }
+
+    .key-btn.btn-success { background: #14532d; color: #4ade80; border: 1px solid #166534; font-size: 1rem; }
+    .key-btn.btn-success:active { background: #166534; }
+    
+    .key-btn.btn-alpha { background: #1e293b; color: #60a5fa; border: 1px solid var(--border); }
+    .key-btn.btn-alpha:active { background: #334155; }
 
     /* --- WEIGHT CALCULATOR PANEL --- */
     .weight-calculator {
@@ -277,37 +295,40 @@
         </div>
       </div>
 
-      <!-- Color Field Input Line Block -->
       <div class="form-group">
         <label id="colorLabel">RAL Code</label>
-        <input type="text" id="formColorText" class="form-control no-native-keyboard" placeholder="TAP KEYPAD TO INPUT..." readonly list="dynamicSuggestions">
+        <input type="text" id="formColorText" class="form-control no-native-keyboard" placeholder="TAP TO OPEN KEYPAD..." readonly onclick="openCustomKeypad()" list="dynamicSuggestions">
         <datalist id="dynamicSuggestions"></datalist>
         
-        <!-- CUSTOM BUILT TOUCHSCREEN KEYPAD CONTAINER -->
         <div id="customKeypadWrapper">
-          <div class="custom-keypad">
-            <button class="key-btn" onclick="pressKey('1')">1</button>
-            <button class="key-btn" onclick="pressKey('2')">2</button>
-            <button class="key-btn" onclick="pressKey('3')">3</button>
-            <button class="key-btn" onclick="pressKey('A')">A</button>
+          <div class="custom-keypad-layout">
+            
+            <div class="keypad-nums">
+              <button class="key-btn" type="button" onclick="pressKey('1')">1</button>
+              <button class="key-btn" type="button" onclick="pressKey('2')">2</button>
+              <button class="key-btn" type="button" onclick="pressKey('3')">3</button>
 
-            <button class="key-btn" onclick="pressKey('4')">4</button>
-            <button class="key-btn" onclick="pressKey('5')">5</button>
-            <button class="key-btn" onclick="pressKey('6')">6</button>
-            <button class="key-btn" onclick="pressKey('B')">B</button>
+              <button class="key-btn" type="button" onclick="pressKey('4')">4</button>
+              <button class="key-btn" type="button" onclick="pressKey('5')">5</button>
+              <button class="key-btn" type="button" onclick="pressKey('6')">6</button>
 
-            <button class="key-btn" onclick="pressKey('7')">7</button>
-            <button class="key-btn" onclick="pressKey('8')">8</button>
-            <button class="key-btn" onclick="pressKey('9')">9</button>
-            <button class="key-btn" onclick="pressKey('C')">C</button>
+              <button class="key-btn" type="button" onclick="pressKey('7')">7</button>
+              <button class="key-btn" type="button" onclick="pressKey('8')">8</button>
+              <button class="key-btn" type="button" onclick="pressKey('9')">9</button>
 
-            <button class="key-btn btn-danger" onclick="pressKey('CLR')">CLR</button>
-            <button class="key-btn" onclick="pressKey('0')">0</button>
-            <button class="key-btn btn-secondary" onclick="pressKey(' ')">SPACE</button>
-            <button class="key-btn" onclick="pressKey('D')">D</button>
+              <button class="key-btn btn-success" type="button" onclick="closeCustomKeypad()">✔️ DONE</button>
+              <button class="key-btn" type="button" onclick="pressKey('0')">0</button>
+              <button class="key-btn btn-danger" type="button" onclick="pressKey('BACK')">⌫</button>
+            </div>
 
-            <button class="key-btn btn-secondary" style="grid-column: span 3;" onclick="pressKey('E')">E</button>
-            <button class="key-btn btn-danger" onclick="pressKey('BACK')">⌫</button>
+            <div class="keypad-alpha-strip">
+              <button class="key-btn btn-alpha" type="button" onclick="pressKey('A')">A</button>
+              <button class="key-btn btn-alpha" type="button" onclick="pressKey('B')">B</button>
+              <button class="key-btn btn-alpha" type="button" onclick="pressKey('C')">C</button>
+              <button class="key-btn btn-alpha" type="button" onclick="pressKey('D')">D</button>
+              <button class="key-btn btn-alpha" type="button" onclick="pressKey('E')">E</button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -331,11 +352,11 @@
         <div class="weight-calculator">
           <div class="weight-display-wrapper">
             <div class="weight-live-readout" id="weightReadout">0 kg</div>
-            <button class="btn-clear-qty" onclick="resetWeightCounter()">❌ Reset</button>
+            <button class="btn-clear-qty" type="button" onclick="resetWeightCounter()">❌ Reset</button>
           </div>
           <div class="weight-grid">
-            <button class="weight-btn btn-plus" onclick="modifyWeight(1)">+1 kg</button>
-            <button class="weight-btn btn-plus" onclick="modifyWeight(5)">+5 kg</button>
+            <button class="weight-btn btn-plus" type="button" onclick="modifyWeight(1)">+1 kg</button>
+            <button class="weight-btn btn-plus" type="button" onclick="modifyWeight(5)">+5 kg</button>
           </div>
         </div>
       </div>
@@ -349,14 +370,13 @@
       </div>
     </div>
     
-    <button class="btn-primary" id="submitBtn" onclick="sendToGoogleTiles()">☁️ Upload & Save Row</button>
+    <button class="btn-primary" type="button" id="submitBtn" onclick="sendToGoogleTiles()">☁️ Upload & Save Row</button>
     <div id="statusMessage"></div>
   </div>
 
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
 
-    // Data metrics parsed accurately from BS-Colour-Chart.jpg & ral-colour-chart.jpg references
     const RAL_LIST = ["1000","1001","1002","1003","1004","1005","1006","1007","1011","1012","1013","1014","1015","1016","1017","1018","1019","1020","1021","1023","1024","1027","1028","1032","1033","1034","2000","2001","2002","2003","2004","2008","2009","2010","2011","2012","3000","3001","3002","3003","3004","3005","3007","3009","3011","3012","3013","3014","3015","3016","3017","3018","3020","3022","3027","3031","4001","4002","4003","4004","4005","4006","4007","4008","4009","5000","5001","5002","5003","5004","5005","5007","5008","5009","5010","5011","5012","5013","5014","5015","5017","5018","5019","5020","5021","5022","5023","5024","6000","6001","6002","6003","6004","6005","6006","6007","6008","6009","6010","6011","6012","6013","6014","6015","6016","6017","6018","6019","6020","6021","6022","6024","6025","6026","6027","6028","6029","6032","6033","6034","7000","7001","7002","7003","7004","7005","7006","7008","7009","7010","7011","7012","7013","7015","7016","7021","7022","7023","7024","7026","7030","7031","7032","7033","7034","7035","7036","7037","7038","7039","7040","7042","7043","7044","8000","8001","8002","8003","8004","8007","8008","8011","8012","8014","8015","8016","8017","8019","8022","8023","8024","8025","8028","9001","9002","9003","9004","9005","9010","9011","9016","9017","9018"];
     const BS_LIST = ["00 A 01","00 A 05","00 A 09","00 A 13","02 C 33","02 C 37","02 C 39","02 C 40","04 B 15","04 B 17","04 B 21","04 C 31","04 C 33","04 C 37","04 C 39","04 D 44","04 D 45","04 E 49","04 E 51","04 E 53","04 E 55","04 E 56","04 E 58","06 C 35","06 C 37","06 C 39","06 C 40","06 D 43","06 D 45","06 E 50","06 E 51","06 E 56","08 B 15","08 B 17","08 B 29","08 C 31","08 C 35","08 C 37","08 D 41","08 E 51","08 E 55","10 A 03","10 B 15","10 B 17","10 B 23","10 B 25","10 C 31","10 C 33","10 C 35","10 C 39","10 D 43","10 D 45","10 E 49","10 E 50","10 E 53","12 B 15","12 B 17","12 B 21","12 B 25","12 C 31","12 C 33","12 C 37","12 D 45","12 E 55","12 F 51","14 C 31","14 C 35","14 C 39","14 C 40","14 E 49","14 E 50","14 E 51","14 E 53","16 C 37","16 D 45","16 E 53","18 B 17","18 B 21","18 B 25","18 C 31","18 C 35","18 C 39","18 E 49","18 E 50","18 E 51","18 E 53","20 C 33","20 C 37","20 C 40","20 D 45","20 E 51","20 E 53","20 E 56","22 B 15","22 B 17","22 D 41","22 D 45","24 C 33","24 C 39","24 E 53"];
 
@@ -380,6 +400,16 @@
       if (value === 'SPECIALTY') document.getElementById('formFinishSpecial').focus();
     }
 
+    function openCustomKeypad() {
+      if (selectedStandard !== 'SPECIAL') {
+        document.getElementById('customKeypadWrapper').style.display = 'block';
+      }
+    }
+
+    function closeCustomKeypad() {
+      document.getElementById('customKeypadWrapper').style.display = 'none';
+    }
+
     function setStandard(type) {
       selectedStandard = type;
       document.getElementById('optRal').classList.toggle('active', type === 'RAL');
@@ -389,27 +419,25 @@
       const label = document.getElementById('colorLabel');
       const inputField = document.getElementById('formColorText');
       const datalist = document.getElementById('dynamicSuggestions');
-      const keypadWrapper = document.getElementById('customKeypadWrapper');
       
       datalist.innerHTML = ""; 
       inputField.value = ""; 
+      closeCustomKeypad();
 
       if (type === 'SPECIAL') {
         label.innerText = "Special Color Name";
-        inputField.placeholder = "TYPE DYNAMIC COLOR STRING...";
-        inputField.readOnly = false; // Enable text input for custom colors
+        inputField.placeholder = "TYPE COLOR NAME MANUALLY...";
+        inputField.readOnly = false; 
         inputField.classList.remove("no-native-keyboard");
-        keypadWrapper.style.display = "none";
         inputField.removeAttribute("list"); 
       } else {
-        inputField.readOnly = true; // Lock field out to prioritize custom grid taps
+        inputField.readOnly = true; 
         inputField.classList.add("no-native-keyboard");
-        keypadWrapper.style.display = "block";
         inputField.setAttribute("list", "dynamicSuggestions");
         
         const currentArray = (type === 'RAL') ? RAL_LIST : BS_LIST;
         label.innerText = (type === 'RAL') ? "RAL Code" : "BS Code";
-        inputField.placeholder = (type === 'RAL') ? "TAP BUTTONS VERBATIM FROM RAL-COLOUR-CHART.JPG..." : "TAP BUTTONS VERBATIM FROM BS-COLOUR-CHART.JPG...";
+        inputField.placeholder = "TAP HERE TO OPEN KEYPAD...";
         
         currentArray.forEach(color => {
           let opt = document.createElement('option');
@@ -419,17 +447,17 @@
       }
     }
 
-    // Controls the custom text insertions when keys are tapped
     function pressKey(val) {
       const field = document.getElementById('formColorText');
-      if (val === 'CLR') {
-        field.value = "";
-      } else if (val === 'BACK') {
+      if (val === 'BACK') {
         field.value = field.value.slice(0, -1);
       } else {
-        field.value += val;
+        if (selectedStandard === 'BS' && (field.value.length === 2 || field.value.length === 4)) {
+          field.value += " " + val;
+        } else {
+          field.value += val;
+        }
       }
-      // Force trigger native list engine lookups to render auto-suggestions inline
       field.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
@@ -475,7 +503,7 @@
       const status = document.getElementById('statusMessage');
 
       if (!brand) { return alert("Please select or type a Manufacturer."); }
-      if (!colorVal) { return alert("Please specify a color identity setting."); }
+      if (!colorVal || colorVal === "TAP HERE TO OPEN KEYPAD...") { return alert("Please specify a color code identity setting."); }
       if (!finish) { return alert("Please select or type a Finish."); }
       if (activeKilos === 0) { return alert("Please add weight in kilos before submitting."); }
 
