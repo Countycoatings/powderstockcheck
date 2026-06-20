@@ -243,10 +243,10 @@
         </div>
       </div>
 
-      <!-- Unified Datalist Smart Suggestion Field -->
+      <!-- Unified Field: Uses type="tel" for dynamic thumb dialpad popups -->
       <div class="form-group">
         <label id="colorLabel">RAL Code</label>
-        <input type="text" id="formColorText" class="form-control" placeholder="TYPE COLOR CODE..." list="dynamicSuggestions">
+        <input type="tel" id="formColorText" class="form-control" placeholder="TYPE COLOR CODE..." list="dynamicSuggestions">
         <datalist id="dynamicSuggestions"></datalist>
       </div>
       
@@ -329,19 +329,20 @@
       const datalist = document.getElementById('dynamicSuggestions');
       
       datalist.innerHTML = ""; 
-      inputField.value = ""; // Clear active input values to reset text field state
+      inputField.value = ""; 
 
       if (type === 'SPECIAL') {
         label.innerText = "Special Color Name";
         inputField.placeholder = "E.G. CANDY APPLE RED / CHROME FLAKE";
-        inputField.removeAttribute("list"); // Drop suggestions completely for special typing
+        inputField.type = "text"; // Standard text keyboard for unique strings
+        inputField.removeAttribute("list"); 
       } else {
+        inputField.type = "tel";  // Activates the heavy thumb dialpad on smartphones
         inputField.setAttribute("list", "dynamicSuggestions");
         const currentArray = (type === 'RAL') ? RAL_LIST : BS_LIST;
         label.innerText = (type === 'RAL') ? "RAL Code" : "BS Code";
-        inputField.placeholder = (type === 'RAL') ? "START TYPING RAL (E.G. 7016)..." : "START TYPING BS (E.G. 18B25)...";
+        inputField.placeholder = (type === 'RAL') ? "TAP TO TYPE VERBATIM FROM RAL-COLOUR-CHART.JPG..." : "TAP TO TYPE VERBATIM FROM BS-COLOUR-CHART.JPG...";
         
-        // Populate standard indices verbatim into hidden search registry list
         currentArray.forEach(color => {
           let opt = document.createElement('option');
           opt.value = color;
