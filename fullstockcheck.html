@@ -10,14 +10,17 @@
   <meta name="apple-mobile-web-app-title" content="Full Stock">
 
   <style>
+    /* --- INDUSTRIAL DARK THEME PALETTE --- */
     :root {
-      --primary: #2563eb;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --border: #cbd5e1;
+      --primary: #3b82f6;       /* Bright Blue Accent */
+      --danger: #ef4444;        /* Clear Warning Red */
+      --success: #22c55e;       /* Success Green */
+      --bg: #0f172a;            /* Deep Midnight Base */
+      --card-bg: #1e293b;       /* Charcoal Slate Layer */
+      --text: #f8fafc;          /* High-Contrast White Text */
+      --text-muted: #94a3b8;    /* Readable Grey Subtext */
+      --border: #334155;        /* Subdued Slate Borders */
+      --input-bg: #0f172a;      /* Recessed Form Fields */
     }
 
     * {
@@ -30,24 +33,41 @@
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding-top: 85px; 
+      padding-top: 105px; 
       padding-bottom: 40px;
     }
 
+    /* --- TIMBER-TONE HEADER SYSTEM --- */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
       background-color: #1e293b;
-      color: white;
-      padding: 16px;
+      color: var(--text);
+      padding: 12px 16px;
       z-index: 1000;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
     }
 
-    header h1 { font-size: 1.2rem; font-weight: 700; }
+    header h1 { 
+      font-size: 1.3rem; 
+      font-weight: 800; 
+      letter-spacing: -0.3px;
+    }
+
+    .header-subtitle {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
 
     .entry-form-container {
       background: var(--card-bg);
@@ -55,22 +75,32 @@
       max-width: 600px;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
       border: 1px solid var(--border);
     }
 
     .entry-form-container h2 {
-      font-size: 1rem; margin-bottom: 14px; color: #0f172a;
+      font-size: 1rem; margin-bottom: 14px; color: var(--text);
       border-bottom: 1px solid var(--border); padding-bottom: 6px;
     }
 
     .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
     .form-group { display: flex; flex-direction: column; }
-    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 5px; }
+    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
 
     .form-control {
       width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border);
-      font-size: 1rem; background-color: #f8fafc; color: var(--text); text-transform: uppercase;
+      font-size: 1rem; background-color: var(--input-bg); color: var(--text); text-transform: uppercase;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Target specific dark-themed options inside dropdown overrides */
+    select.form-control option {
+      background-color: var(--card-bg);
+      color: var(--text);
     }
 
     #specialBrandGroup {
@@ -80,10 +110,11 @@
 
     .toggle-segment {
       display: flex;
-      background: #e2e8f0;
+      background: var(--input-bg);
       padding: 4px;
       border-radius: 8px;
       width: 100%;
+      border: 1px solid var(--border);
     }
     .toggle-option {
       flex: 1;
@@ -93,17 +124,18 @@
       font-size: 0.9rem;
       cursor: pointer;
       border-radius: 6px;
-      color: #64748b;
+      color: var(--text-muted);
       transition: all 0.2s;
     }
     .toggle-option.active {
-      background: white;
-      color: #0f172a;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
 
+    /* --- THEMED WEIGHT SYSTEM CONTROL PANEL --- */
     .weight-calculator {
-      background: #f8fafc;
+      background: var(--input-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
@@ -113,60 +145,58 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 1px dashed var(--border);
     }
 
     .weight-live-readout {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 900;
       color: var(--primary);
     }
 
     .btn-clear-qty {
-      background: #e2e8f0;
+      background: var(--border);
       border: none;
-      color: #475569;
+      color: var(--text);
       font-weight: 700;
-      font-size: 0.75rem;
-      padding: 6px 12px;
-      border-radius: 4px;
+      font-size: 0.8rem;
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
     }
+    .btn-clear-qty:active { background: #475569; }
 
     .weight-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .weight-row {
-      display: flex;
-      gap: 6px;
+      gap: 12px;
     }
 
     .weight-btn {
-      flex: 1;
-      padding: 14px 0;
+      padding: 18px 0;
       text-align: center;
-      border-radius: 6px;
-      font-size: 1.05rem;
+      border-radius: 8px;
+      font-size: 1.2rem;
       font-weight: 800;
       cursor: pointer;
       border: none;
       user-select: none;
     }
 
-    .btn-plus { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-    .btn-minus { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-    .weight-btn:active { opacity: 0.7; }
+    .btn-plus { 
+      background: #1e3a8a; 
+      color: #60a5fa; 
+      border: 1px solid #1e40af; 
+    }
+    .weight-btn:active { opacity: 0.6; }
 
     .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
     .file-input-label {
-      display: block; padding: 12px; background: #e2e8f0; color: #334155;
+      display: block; padding: 12px; background: var(--input-bg); color: var(--text);
       border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.9rem;
-      cursor: pointer; border: 1px dashed #94a3b8;
+      cursor: pointer; border: 1px dashed var(--border);
     }
     .hidden-file-input { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
@@ -174,8 +204,9 @@
       background-color: var(--primary); color: white; width: 100%; padding: 14px; 
       font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;
       margin-top: 10px;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
     }
-    .btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
+    .btn-primary:disabled { background-color: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
 
     #statusMessage {
       text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9rem; display: none;
@@ -184,15 +215,17 @@
 </head>
 <body>
 
+  <!-- FIXED HEADER BLOCK -->
   <header>
-    <h1>County Coatings Cloud</h1>
-    <span style="font-size: 0.8rem; background: #16a34a; padding: 4px 8px; border-radius: 12px;">Live Connected</span>
+    <h1>County Coatings</h1>
+    <div class="header-subtitle">Full Stock Check</div>
   </header>
 
   <div class="entry-form-container">
     <h2>Log Box Direct to Google Sheet</h2>
     <div class="form-grid">
       
+      <!-- Manufacturer Select Dropdown -->
       <div class="form-group">
         <label>Manufacturer</label>
         <select id="formBrandSelect" class="form-control" onchange="checkSpecialBrand(this.value)">
@@ -214,6 +247,7 @@
         <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
       </div>
 
+      <!-- Color Coding Standard Switch -->
       <div class="form-group">
         <label>Standard Type</label>
         <div class="toggle-segment">
@@ -239,6 +273,7 @@
         </select>
       </div>
       
+      <!-- Rapid Weight Selector Panel Component -->
       <div class="form-group">
         <label>Total Weight Found</label>
         <div class="weight-calculator">
@@ -247,14 +282,8 @@
             <button class="btn-clear-qty" onclick="resetWeightCounter()">❌ Reset</button>
           </div>
           <div class="weight-grid">
-            <div class="weight-row">
-              <button class="weight-btn btn-minus" onclick="modifyWeight(-1)">-1kg</button>
-              <button class="weight-btn btn-plus" onclick="modifyWeight(1)">+1kg</button>
-            </div>
-            <div class="weight-row">
-              <button class="weight-btn btn-minus" onclick="modifyWeight(-5)">-5kg</button>
-              <button class="weight-btn btn-plus" onclick="modifyWeight(5)">+5kg</button>
-            </div>
+            <button class="weight-btn btn-plus" onclick="modifyWeight(1)">+1 kg</button>
+            <button class="weight-btn btn-plus" onclick="modifyWeight(5)">+5 kg</button>
           </div>
         </div>
       </div>
@@ -312,7 +341,6 @@
 
     function modifyWeight(amount) {
       activeKilos += amount;
-      if (activeKilos < 0) activeKilos = 0;
       document.getElementById('weightReadout').innerText = activeKilos + " kg";
     }
 
@@ -330,7 +358,8 @@
         reader.onload = function(e) {
           currentBase64Image = e.target.result;
           label.innerText = "✅ Photo Ready";
-          label.style.background = "#dcfce7";
+          label.style.background = "#1e3a8a";
+          label.style.borderColor = "#3b82f6";
         };
         reader.readAsDataURL(fileInput.files[0]);
       }
@@ -366,10 +395,9 @@
       btn.disabled = true;
       btn.innerText = "⚡ Uploading Data...";
       status.style.display = "block";
-      status.style.color = "#2563eb";
+      status.style.color = "#60a5fa";
       status.innerText = "Sending row to Google Sheets & uploading image...";
 
-      // If it's a Special color, don't prefix with "SPECIAL " to avoid cluttering your text layout
       const fullColorCodeString = (selectedStandard === 'SPECIAL') ? colorVal : `${selectedStandard} ${colorVal}`;
       const dynamicWeightString = `${activeKilos} kg`;
 
@@ -390,7 +418,7 @@
         body: JSON.stringify(payload)
       })
       .then(() => {
-        status.style.color = "#16a34a";
+        status.style.color = "var(--success)";
         status.innerText = "🎉 Successfully saved to Google Sheet!";
         
         document.getElementById('formCode').value = "";
@@ -400,14 +428,15 @@
         document.getElementById('formBrandSpecial').value = "";
         document.getElementById('formPhoto').value = "";
         document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
-        document.getElementById('fileLabel').style.background = "#e2e8f0";
+        document.getElementById('fileLabel').style.background = "var(--input-bg)";
+        document.getElementById('fileLabel').style.borderColor = "var(--border)";
         
         currentBase64Image = "";
         resetWeightCounter();
         setStandard('RAL');
       })
       .catch(err => {
-        status.style.color = "#dc2626";
+        status.style.color = "var(--danger)";
         status.innerText = "❌ Upload failed. Check internet connection.";
         console.error(err);
       })
