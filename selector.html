@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sadie's Boyfriend Selector</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* The Simpsons Theme Styling */
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-
+        /* Modern, Clean App Styling */
         body {
-            background-color: #70D1FE; 
-            font-family: 'Fredoka One', 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f4f7f6; /* Soft, modern light gray */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            color: #000;
+            color: #333;
         }
 
         .app-container {
@@ -22,96 +21,133 @@
         }
 
         .card {
-            background-color: #FFD90F; 
-            border: 5px solid #000;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 8px 8px 0px #000;
+            background-color: #ffffff; 
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); /* Soft shadow */
+            border: 1px solid #eaeaea;
         }
 
         .header {
-            background-color: #FF69B4; 
             text-align: center;
-            border: 5px solid #000;
-            border-radius: 20px;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-shadow: 6px 6px 0px #000;
+            padding: 10px 0 20px 0;
         }
 
         h1 {
-            color: #FFF;
-            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            color: #1a1a1a;
             margin: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         h2 {
             margin-top: 0;
-            border-bottom: 3px dashed #000;
-            padding-bottom: 10px;
+            color: #555;
+            font-size: 18px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #444;
         }
 
         input[type="text"], 
-        input[type="tel"], 
         select, 
         input[type="file"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 3px solid #000;
-            border-radius: 8px;
-            font-family: 'Fredoka One', cursive;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
             font-size: 16px;
+            font-family: inherit;
             box-sizing: border-box;
+            background-color: #fafafa;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, 
+        select:focus {
+            outline: none;
+            border-color: #007aff;
+            background-color: #fff;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            display: none; 
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .slider-container {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background-color: #fef4f4;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ffebeb;
         }
 
         input[type="range"] {
             width: 100%;
             cursor: pointer;
+            margin-top: 10px;
         }
 
+        /* Modern App Buttons */
         button {
             width: 100%;
-            padding: 15px;
-            font-size: 20px;
-            font-family: 'Fredoka One', cursive;
-            border: 4px solid #000;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: inherit;
+            border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 4px 4px 0px #000;
-            transition: transform 0.1s;
+            transition: opacity 0.2s, transform 0.1s;
         }
 
         button:active {
-            transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px #000;
+            transform: scale(0.98);
         }
 
         .btn-whatsapp {
-            background-color: #25D366; /* WhatsApp Green */
+            background-color: #25D366;
             color: white;
-            text-shadow: 2px 2px 0 #000;
-            margin-top: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-save {
+            background-color: #007aff; /* iOS Blue */
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
         
         .disclaimer {
-            font-family: sans-serif;
-            font-size: 12px;
+            font-size: 13px;
+            color: #888;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 16px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -120,36 +156,46 @@
 <div class="app-container">
     
     <div class="header">
-        <h1>SADIE'S BOYFRIEND SELECTOR</h1>
+        <h1>Boyfriend Selector 🔍</h1>
     </div>
 
-    <!-- Phase 1: The Dossier -->
     <div class="card" id="dossier-card">
         <h2>1. Candidate Dossier</h2>
         
         <label for="pic">Capture Evidence (Photo):</label>
         <input type="file" id="pic" accept="image/*">
+        
+        <div class="image-preview" id="image-preview">
+            <img id="suspect-photo" src="" alt="Suspect Evidence">
+        </div>
 
         <label for="name">Suspect Name:</label>
-        <input type="text" id="name" placeholder="e.g., Milhouse">
+        <input type="text" id="name" placeholder="First Name / Last Name">
 
         <label for="job">Employment Status:</label>
         <select id="job">
-            <option value="Unknown">-- Select One --</option>
-            <option value="Gainfully Employed">Gainfully Employed</option>
-            <option value="Nuclear Power Plant Worker">Nuclear Power Plant Worker</option>
-            <option value="Aspiring DJ">Aspiring DJ / Musician</option>
-            <option value="Bartender">Bartender at Moe's</option>
-            <option value="Professional Student">Professional Student</option>
+            <option value="Unknown">-- Select Industry --</option>
+            <option value="Corporate Professional">Corporate / Business</option>
+            <option value="Tech / IT">Software / Tech</option>
+            <option value="Finance">Finance / Banking</option>
+            <option value="Trades / Construction">Trades / Construction</option>
+            <option value="Healthcare Professional">Healthcare / Medical</option>
+            <option value="Creative Professional">Creative / Media / Arts</option>
+            <option value="Service Industry">Hospitality / Service Industry</option>
+            <option value="Self Employed">Self-Employed / Entrepreneur</option>
+            <option value="Student">Full-time Student</option>
+            <option value="Unemployed">Between Opportunities (Unemployed)</option>
         </select>
 
         <label for="vibe">Looks & Vibe:</label>
         <select id="vibe">
-            <option value="Unknown">-- Select One --</option>
-            <option value="Skater Boy">Skater Boy</option>
-            <option value="Lovable Nerd">Lovable Nerd</option>
-            <option value="Finance Bro">Finance Bro</option>
+            <option value="Unknown">-- Select Overall Vibe --</option>
             <option value="Golden Retriever">Golden Retriever Energy</option>
+            <option value="Outdoorsy">Outdoorsy / Athletic</option>
+            <option value="Preppy / Put Together">Preppy / Put Together</option>
+            <option value="Grungy but Clean">Alternative / Edgy</option>
+            <option value="Quiet / Introverted">Quiet / Introverted</option>
+            <option value="Life of the Party">Life of the Party</option>
         </select>
 
         <div class="slider-container">
@@ -158,50 +204,81 @@
         </div>
     </div>
 
-    <!-- Phase 2: WhatsApp Integration -->
     <div class="card">
-        <h2>2. Dispatch to Dad</h2>
-        <label for="dad-phone">Dad's WhatsApp # (Optional):</label>
-        <input type="tel" id="dad-phone" placeholder="e.g., 15551234567 (No +, dashes, or spaces)">
+        <h2>2. Approval Actions</h2>
         
-        <button class="btn-whatsapp" onclick="sendToWhatsApp()">💬 TEXT DAD FOR APPROVAL</button>
-        <div class="disclaimer">Dad will receive a formatted report to review!</div>
+        <button class="btn-whatsapp" onclick="sendToWhatsApp()">💬 SECURE TEXT TO DAD</button>
+        <button class="btn-save" onclick="saveDossierImage()">💾 SAVE DOSSIER TO PHOTOS</button>
+        
+        <div class="disclaimer">
+            Saving downloads a high-res image to your device.<br>Dad's number is hidden securely in the system.
+        </div>
     </div>
 
 </div>
 
 <script>
+    // --- HIDDEN DAD NUMBER ---
+    // Update this to Dad's real WhatsApp number (include country code, no +, spaces, or dashes. e.g., 15551234567)
+    const DADS_SECRET_NUMBER = "+4407717872870"; 
+
+    // Handle Image Preview
+    document.getElementById('pic').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('suspect-photo').src = e.target.result;
+                document.getElementById('image-preview').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle WhatsApp Sending
     function sendToWhatsApp() {
-        // Gather the data from the dossier
         const name = document.getElementById('name').value || "Unknown Suspect";
-        
         const jobSelect = document.getElementById('job');
         const job = jobSelect.options[jobSelect.selectedIndex].text;
-        
         const vibeSelect = document.getElementById('vibe');
         const vibe = vibeSelect.options[vibeSelect.selectedIndex].text;
-        
         const flags = document.getElementById('red-flag').value;
-        const phone = document.getElementById('dad-phone').value;
 
-        // Format the message for WhatsApp
-        const message = `🚨 *SADIE'S BOYFRIEND SELECTOR* 🚨\n\nDad, a new candidate requires clearance.\n\n*Name:* ${name}\n*Employment:* ${job}\n*Vibe:* ${vibe}\n*Red Flag Level:* ${flags}/10\n\nPlease review the suspect and reply with your verdict:\n\n👍 APPROVE\n🔍 NEED MORE INTEL\n🚫 VETO`;
+        const message = `🚨 *BOYFRIEND SELECTOR APP* 🚨\n\nDad, a new candidate requires clearance.\n\n*Name:* ${name}\n*Employment:* ${job}\n*Vibe:* ${vibe}\n*Red Flag Level:* ${flags}/10\n\nPlease review the suspect and reply with your verdict:\n\n👍 APPROVE\n🔍 NEED MORE INTEL\n🚫 VETO`;
 
-        // Encode the message so it works in a URL
         const encodedMessage = encodeURIComponent(message);
         
-        // Build the WhatsApp link
-        let whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-        
-        // If a phone number was entered, route it directly to that chat
-        if (phone) {
-            // Strips out any accidental spaces or dashes the user might type
-            const cleanPhone = phone.replace(/[^0-9]/g, '');
-            whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
-        }
+        const cleanPhone = DADS_SECRET_NUMBER.replace(/[^0-9]/g, '');
+        const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
 
-        // Open WhatsApp in a new tab/app
         window.open(whatsappUrl, '_blank');
+    }
+
+    // Handle Image Saving
+    function saveDossierImage() {
+        const dossierCard = document.getElementById('dossier-card');
+        const fileInput = document.getElementById('pic');
+        const fileInputLabel = document.querySelector('label[for="pic"]');
+        
+        // Hide the choose file button during capture
+        fileInput.style.display = 'none';
+        fileInputLabel.style.display = 'none';
+
+        html2canvas(dossierCard, {
+            backgroundColor: "#ffffff", // Matches the clean modern background
+            scale: 2, 
+            borderRadius: 16
+        }).then(canvas => {
+            const link = document.createElement('a');
+            const nameInput = document.getElementById('name').value || "candidate";
+            link.download = `dossier-${nameInput}.png`; 
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            // Restore the choose file button
+            fileInput.style.display = 'block';
+            fileInputLabel.style.display = 'block';
+        });
     }
 </script>
 
