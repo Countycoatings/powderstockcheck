@@ -73,6 +73,62 @@
       font-size: 1rem; background-color: #f8fafc; color: var(--text); text-transform: uppercase;
     }
 
+    /* Inline sliding input layout for special option */
+    #specialBrandGroup {
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* Clean segment style switch for thumb selection */
+    .toggle-segment {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 8px;
+      width: 100%;
+    }
+    .toggle-option {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 6px;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+    .toggle-option.active {
+      background: white;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Chunky Right Thumb Qty Selector Panel */
+    .qty-tile-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .qty-tile {
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      padding: 16px 0;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+    }
+    .qty-tile.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
     .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
     .file-input-label {
       display: block; padding: 12px; background: #e2e8f0; color: #334155;
@@ -84,6 +140,7 @@
     .btn-primary { 
       background-color: var(--primary); color: white; width: 100%; padding: 14px; 
       font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;
+      margin-top: 10px;
     }
     .btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
 
@@ -102,12 +159,23 @@
   <div class="entry-form-container">
     <h2>Log Box Direct to Google Sheet</h2>
     <div class="form-grid">
+      
+      <!-- Manufacturer Select Dropdown -->
       <div class="form-group">
         <label>Manufacturer</label>
-        <input type="text" id="formBrand" class="form-control" placeholder="E.G. AXALTA" list="brands">
-        <datalist id="brands">
-          <option value="AXALTA"><option value="AKZONOBEL"><option value="TIGER"><option value="SYNTHA PULVIN">
-        </datalist>
+        <select id="formBrandSelect" class="form-control" onchange="checkSpecialBrand(this.value)">
+          <option value="AXALTA">AXALTA</option>
+          <option value="THERMASET">THERMASET</option>
+          <option value="HMG">HMG</option>
+          <option value="CROMADEX">CROMADEX</option>
+          <option value="WITHAM">WITHAM</option>
+          <option value="SPECIAL">SPECIAL (TYPE NEW)...</option>
+        </select>
+        
+        <!-- Hidden input field pops open if 'SPECIAL' is chosen -->
+        <div id="specialBrandGroup">
+          <input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE SPECIAL BRAND NAME...">
+        </div>
       </div>
       
       <div class="form-group">
@@ -115,9 +183,18 @@
         <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
       </div>
 
+      <!-- Color Coding Standard Standard Toggle Logic -->
       <div class="form-group">
-        <label>RAL / BS Code</label>
-        <input type="text" id="formRal" class="form-control" placeholder="E.G. RAL 7016 OR BS 18B25">
+        <label>Standard Type</label>
+        <div class="toggle-segment">
+          <div class="toggle-option active" id="optRal" onclick="setStandard('RAL')">RAL</div>
+          <div class="toggle-option" id="optBs" onclick="setStandard('BS')">BS</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label id="colorLabel">RAL Code</label>
+        <input type="text" id="formRal" class="form-control" placeholder="E.G. 7016">
       </div>
       
       <div class="form-group">
@@ -131,9 +208,15 @@
         </select>
       </div>
       
+      <!-- Right Thumb Selection Box Layout Tile Block -->
       <div class="form-group">
-        <label>Boxes (0.2 = ~4kg Step)</label>
-        <input type="number" id="formQty" class="form-control" value="0.0" step="0.2" min="0">
+        <label>Boxes Found (20kg Scale Fraction)</label>
+        <div class="qty-tile-grid">
+          <div class="qty-tile" id="tile25" onclick="setQty(0.25)">0.25</div>
+          <div class="qty-tile" id="tile50" onclick="setQty(0.50)">0.50</div>
+          <div class="qty-tile" id="tile75" onclick="setQty(0.75)">0.75</div>
+          <div class="qty-tile" id="tile100" onclick="setQty(1.00)">1.00</div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -154,6 +237,43 @@
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
 
     let currentBase64Image = "";
+    let selectedStandard = "RAL";
+    let selectedQty = 0.00;
+
+    function checkSpecialBrand(value) {
+      const specialGroup = document.getElementById('specialBrandGroup');
+      if (value === 'SPECIAL') {
+        specialGroup.style.display = 'block';
+        document.getElementById('formBrandSpecial').focus();
+      } else {
+        specialGroup.style.display = 'none';
+      }
+    }
+
+    function setStandard(type) {
+      selectedStandard = type;
+      document.getElementById('optRal').classList.toggle('active', type === 'RAL');
+      document.getElementById('optBs').classList.toggle('active', type === 'BS');
+      
+      const label = document.getElementById('colorLabel');
+      const input = document.getElementById('formRal');
+      if (type === 'RAL') {
+        label.innerText = "RAL Code";
+        input.placeholder = "E.G. 7016";
+      } else {
+        label.innerText = "BS Code";
+        input.placeholder = "E.G. 18B25";
+      }
+    }
+
+    function setQty(val) {
+      // Toggle color state across our tiles to visually map active choices
+      selectedQty = val;
+      document.getElementById('tile25').classList.toggle('active', val === 0.25);
+      document.getElementById('tile50').classList.toggle('active', val === 0.50);
+      document.getElementById('tile75').classList.toggle('active', val === 0.75);
+      document.getElementById('tile100').classList.toggle('active', val === 1.00);
+    }
 
     function handlePhotoSelect() {
       const fileInput = document.getElementById('formPhoto');
@@ -171,20 +291,27 @@
     }
 
     function sendToGoogleTiles() {
-      const brand = document.getElementById('formBrand').value.trim().toUpperCase();
+      let brand = document.getElementById('formBrandSelect').value;
+      if (brand === 'SPECIAL') {
+        brand = document.getElementById('formBrandSpecial').value.trim();
+      }
+      brand = brand.toUpperCase();
+
       const code = document.getElementById('formCode').value.trim().toUpperCase();
-      const ral = document.getElementById('formRal').value.trim().toUpperCase();
+      const colorVal = document.getElementById('formRal').value.trim().toUpperCase();
       const finish = document.getElementById('formFinish').value.toUpperCase();
-      const qty = parseFloat(document.getElementById('formQty').value) || 0.0;
       
       const btn = document.getElementById('submitBtn');
       const status = document.getElementById('statusMessage');
 
       if (!brand) {
-        alert("Please state the Manufacturer.");
+        alert("Please select or type a Manufacturer.");
         return;
       }
-
+      if (selectedQty === 0) {
+        alert("Please tap a quantity tile box fraction before submitting.");
+        return;
+      }
       if (GOOGLE_SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
         alert("Setup Error: You forgot to paste your Google Web App URL into the code script.");
         return;
@@ -196,12 +323,15 @@
       status.style.color = "#2563eb";
       status.innerText = "Sending row to Google Sheets & uploading image...";
 
+      // Standard type prefixed automatically right inside backend payload string
+      const fullColorCodeString = `${selectedStandard} ${colorVal}`;
+
       const payload = {
         brand: brand,
         code: code,
-        ral: ral,
+        ral: fullColorCodeString,
         finish: finish,
-        qty: qty,
+        qty: selectedQty,
         image: currentBase64Image
       };
 
@@ -216,14 +346,20 @@
         status.style.color = "#16a34a";
         status.innerText = "🎉 Successfully saved to Google Sheet!";
         
-        // Reset form variables safely
+        // Reset variables
         document.getElementById('formCode').value = "";
         document.getElementById('formRal').value = "";
-        document.getElementById('formQty').value = "0.0";
+        document.getElementById('formBrandSelect').value = "AXALTA";
+        document.getElementById('specialBrandGroup').style.display = 'none';
+        document.getElementById('formBrandSpecial').value = "";
         document.getElementById('formPhoto').value = "";
         document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
         document.getElementById('fileLabel').style.background = "#e2e8f0";
+        
+        // Clear custom button selections
         currentBase64Image = "";
+        setQty(0.00); 
+        setStandard('RAL');
       })
       .catch(err => {
         status.style.color = "#dc2626";
