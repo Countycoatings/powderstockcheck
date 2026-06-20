@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sadie's Boyfriend Selector</title>
+    <style>
+        /* The Simpsons Theme Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+        body {
+            background-color: #70D1FE; /* Springfield Sky Blue */
+            font-family: 'Fredoka One', 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Chunky Cartoon Containers */
+        .card {
+            background-color: #FFD90F; /* Classic Simpsons Yellow */
+            border: 5px solid #000;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 8px 8px 0px #000;
+        }
+
+        .header {
+            background-color: #FF69B4; /* Lard Lad Donut Pink */
+            text-align: center;
+            border: 5px solid #000;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 6px 6px 0px #000;
+        }
+
+        h1 {
+            color: #FFF;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 3px dashed #000;
+            padding-bottom: 10px;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        select, 
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 3px solid #000;
+            border-radius: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Chunky Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 20px;
+            font-family: 'Fredoka One', cursive;
+            border: 4px solid #000;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #000;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        .btn-approve {
+            background-color: #32CD32; /* Radioactive Green */
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .btn-intel {
+            background-color: #FFA500; /* Orange */
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .btn-veto {
+            background-color: #FF0000; /* Red */
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* Status Output */
+        #status-message {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+            display: none;
+            padding: 15px;
+            border: 4px solid #000;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 5px 5px 0px #000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <div class="header">
+        <h1>SADIE'S BOYFRIEND SELECTOR</h1>
+    </div>
+
+    <div class="card" id="dossier-card">
+        <h2>1. Candidate Dossier</h2>
+        
+        <label for="pic">Capture Evidence (Photo):</label>
+        <input type="file" id="pic" accept="image/*">
+
+        <label for="name">Suspect Name:</label>
+        <input type="text" id="name" placeholder="e.g., Milhouse">
+
+        <label for="job">Employment Status:</label>
+        <select id="job">
+            <option value="">-- Select One --</option>
+            <option value="gainful">Gainfully Employed</option>
+            <option value="nuclear">Nuclear Power Plant Worker</option>
+            <option value="dj">Aspiring DJ / Musician</option>
+            <option value="bartender">Bartender at Moe's</option>
+            <option value="student">Professional Student</option>
+        </select>
+
+        <label for="vibe">Looks & Vibe:</label>
+        <select id="vibe">
+            <option value="">-- Select One --</option>
+            <option value="skater">Skater Boy</option>
+            <option value="nerd">Lovable Nerd</option>
+            <option value="finance">Finance Bro</option>
+            <option value="golden">Golden Retriever Energy</option>
+        </select>
+
+        <div class="slider-container">
+            <label for="red-flag">Red Flag Meter (1 = Angel, 10 = Run!): <span id="flag-value">5</span></label>
+            <input type="range" id="red-flag" min="1" max="10" value="5" oninput="document.getElementById('flag-value').innerText = this.value">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>2. Dad Review Dashboard</h2>
+        <div class="button-group">
+            <button class="btn-approve" onclick="dadAction('APPROVES')">👍 DAD APPROVES</button>
+            <button class="btn-intel" onclick="dadAction('INTEL')">🔍 NEEDS MORE INTEL</button>
+            <button class="btn-veto" onclick="dadAction('VETO')">🚫 THE VETO</button>
+        </div>
+    </div>
+
+    <div id="status-message"></div>
+
+</div>
+
+<script>
+    function dadAction(action) {
+        const name = document.getElementById('name').value || "Unknown Candidate";
+        const statusBox = document.getElementById('status-message');
+        
+        statusBox.style.display = 'block';
+
+        if (action === 'APPROVES') {
+            statusBox.style.backgroundColor = '#32CD32';
+            statusBox.style.color = 'white';
+            statusBox.innerHTML = `✅ DAD SAYS: "${name} seems like a solid guy. Excellent."`;
+        } else if (action === 'INTEL') {
+            statusBox.style.backgroundColor = '#FFA500';
+            statusBox.style.color = 'white';
+            statusBox.innerHTML = `🧐 DAD SAYS: "Hold up. Can ${name} change a tire? Investigate."`;
+        } else if (action === 'VETO') {
+            statusBox.style.backgroundColor = '#FF0000';
+            statusBox.style.color = 'white';
+            statusBox.innerHTML = `❌ DAD SAYS: "Absolutely not. ${name} is DENIED. D'oh!"`;
+        }
+    }
+</script>
+
+</body>
+</html>
