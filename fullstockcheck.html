@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>County Coatings - Full Stock Check</title>
+  <title>County Coatings - Cloud Stock Check</title>
   
-  <!-- Apple Web App Meta Tags for Full-Screen Mode -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Full Stock">
@@ -23,262 +22,102 @@
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0; padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding-top: 115px; /* Space for frozen top row */
+      padding-top: 85px; 
       padding-bottom: 40px;
     }
 
-    /* --- PORTRAIT ONLY LOCKDOWN COVER --- */
-    .orientation-alert {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #1e293b;
-      color: white;
-      z-index: 9999;
-      text-align: center;
-      padding-top: 35%;
-    }
-    .orientation-alert h2 { font-size: 1.5rem; margin-bottom: 10px; }
-    .orientation-alert p { font-size: 1rem; color: #94a3b8; }
-
-    @media screen and (orientation: landscape) {
-      .orientation-alert { display: block !important; }
-      body { overflow: hidden; }
-    }
-
-    /* --- LEAN FROZEN HEADER --- */
     header {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       background-color: #1e293b;
       color: white;
-      padding: 12px 16px;
+      padding: 16px;
       z-index: 1000;
       box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    }
-
-    .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
     }
 
-    .header-top h1 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
 
-    .global-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .btn {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: none;
-      font-weight: 600;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .btn-danger { background-color: var(--danger); color: white; }
-    .btn-secondary { background-color: #475569; color: white; }
-    .btn-success { background-color: var(--success); color: white; }
-    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border-radius: 8px; margin-top: 5px; }
-
-    .search-bar {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid #475569;
-      background-color: #334155;
-      color: white;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-    }
-    .search-bar::placeholder { color: #94a3b8; text-transform: none; }
-
-    /* --- SCROLLABLE DATA ENTRY WIDGET --- */
     .entry-form-container {
       background: var(--card-bg);
-      margin: 12px;
-      padding: 16px;
+      margin: 12px auto;
+      max-width: 600px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       border: 1px solid var(--border);
     }
 
     .entry-form-container h2 {
-      font-size: 1rem;
-      margin-bottom: 14px;
-      color: #0f172a;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
+      font-size: 1rem; margin-bottom: 14px; color: #0f172a;
+      border-bottom: 1px solid var(--border); padding-bottom: 6px;
     }
 
-    .form-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #64748b;
-      margin-bottom: 5px;
-    }
+    .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 5px; }
 
     .form-control {
-      width: 100%;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      font-size: 1rem;
-      background-color: #f8fafc;
-      color: var(--text);
-      -webkit-appearance: none;
-      text-transform: uppercase;
-    }
-    .form-control::placeholder { text-transform: none; }
-
-    /* --- INVENTORY SHEET ROW --- */
-    .list-container {
-      padding: 0 12px;
+      width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border);
+      font-size: 1rem; background-color: #f8fafc; color: var(--text); text-transform: uppercase;
     }
 
-    .powder-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      border: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
+    .file-input-label {
+      display: block; padding: 12px; background: #e2e8f0; color: #334155;
+      border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; border: 1px dashed #94a3b8;
     }
+    .hidden-file-input { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-    .powder-info {
-      flex: 1;
-      padding-right: 10px;
+    .btn-primary { 
+      background-color: var(--primary); color: white; width: 100%; padding: 14px; 
+      font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;
     }
+    .btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
 
-    .powder-title {
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #0f172a;
-      text-transform: uppercase;
-    }
-
-    .powder-meta {
-      font-size: 0.8rem;
-      color: #64748b;
-      margin-top: 2px;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    /* Chunky Touch-Target Controls */
-    .counter-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-counter {
-      width: 54px;
-      height: 48px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1.1rem;
-      font-weight: 700;
-      background-color: #e2e8f0;
-      color: #1e293b;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .btn-counter:active { background-color: var(--border); }
-
-    .qty-display {
-      font-size: 1.15rem;
-      font-weight: 700;
-      width: 65px;
-      text-align: center;
-      border: none;
-      background: transparent;
-      color: #0f172a;
-    }
-
-    @media print {
-      body { padding: 0; background: white; }
-      header, .entry-form-container, .btn-counter, .orientation-alert { display: none !important; }
-      .powder-card { border: none; border-bottom: 1px solid #000; border-radius: 0; box-shadow: none; margin: 0; padding: 8px 0; }
-      .qty-display { font-weight: bold; }
+    #statusMessage {
+      text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9rem; display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- ORIENTATION ALERT -->
-  <div class="orientation-alert">
-    <h2>🔄 Portrait Mode Required</h2>
-    <p>Please turn your iPhone back vertically to continue checking stock.</p>
-  </div>
-
-  <!-- FIXED HEADER ROW -->
-  <header id="appHeader">
-    <div class="header-top">
-      <h1>County Coatings</h1>
-      <div class="global-actions">
-        <button class="btn btn-secondary" onclick="toggleView()" id="viewToggleBtn">Sheet View</button>
-        <button class="btn btn-success" onclick="exportToCSV()">Download Excel</button>
-        <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
-      </div>
-    </div>
-    <input type="text" id="searchInput" class="search-bar" placeholder="QUICK SEARCH COLOR, RAL, BRAND..." oninput="renderList()">
+  <header>
+    <h1>County Coatings Cloud</h1>
+    <span style="font-size: 0.8rem; background: #16a34a; padding: 4px 8px; border-radius: 12px;">Live Connected</span>
   </header>
 
-  <!-- WORKSHOP ENTRY WIDGET -->
-  <div class="entry-form-container" id="entryForm">
-    <h2>Log New Box to Sheet</h2>
+  <div class="entry-form-container">
+    <h2>Log Box Direct to Google Sheet</h2>
     <div class="form-grid">
       <div class="form-group">
         <label>Manufacturer</label>
         <input type="text" id="formBrand" class="form-control" placeholder="E.G. AXALTA" list="brands">
         <datalist id="brands">
-          <option value="AXALTA">
-          <option value="AKZONOBEL">
-          <option value="TIGER">
-          <option value="SYNTHA PULVIN">
+          <option value="AXALTA"><option value="AKZONOBEL"><option value="TIGER"><option value="SYNTHA PULVIN">
         </datalist>
       </div>
       
       <div class="form-group">
-        <label>Stock Code / RAL</label>
-        <input type="text" id="formCode" class="form-control" placeholder="E.G. RAL 7016">
+        <label>Stock Code</label>
+        <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
+      </div>
+
+      <div class="form-group">
+        <label>RAL / BS Code</label>
+        <input type="text" id="formRal" class="form-control" placeholder="E.G. RAL 7016 OR BS 18B25">
       </div>
       
       <div class="form-group">
@@ -293,170 +132,109 @@
       </div>
       
       <div class="form-group">
-        <label>Boxes Found</label>
-        <input type="number" id="formQty" class="form-control" value="0.00" step="0.25" min="0">
+        <label>Boxes (0.2 = ~4kg Step)</label>
+        <input type="number" id="formQty" class="form-control" value="0.0" step="0.2" min="0">
+      </div>
+
+      <div class="form-group">
+        <label>Visual Check (Save to Google Drive)</label>
+        <div class="file-input-wrapper">
+          <span class="file-input-label" id="fileLabel">📷 Take Box Photo</span>
+          <input type="file" accept="image/*" capture="environment" id="formPhoto" class="hidden-file-input" onchange="handlePhotoSelect()">
+        </div>
       </div>
     </div>
-    <button class="btn btn-primary" onclick="addPowder()">+ Commit Box to Sheet</button>
+    
+    <button class="btn-primary" id="submitBtn" onclick="sendToGoogleTiles()">☁️ Upload & Save Row</button>
+    <div id="statusMessage"></div>
   </div>
 
-  <!-- MAIN LIST VIEW -->
-  <main class="list-container" id="powderList"></main>
-
   <script>
-    let inventory = JSON.parse(localStorage.getItem('fullStockInventory')) || [];
-    let currentView = "all"; 
+    // ⚠️ PASTE YOUR GOOGLE WEB APP URL INSIDE THE QUOTES BELOW:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.body.style.paddingTop = (document.getElementById('appHeader').offsetHeight + 12) + 'px';
-      renderList();
-    });
+    let currentBase64Image = "";
 
-    function addPowder() {
+    function handlePhotoSelect() {
+      const fileInput = document.getElementById('formPhoto');
+      const label = document.getElementById('fileLabel');
+      if (fileInput.files && fileInput.files[0]) {
+        label.innerText = "⏳ Reading file...";
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentBase64Image = e.target.result;
+          label.innerText = "✅ Photo Ready";
+          label.style.background = "#dcfce7";
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function sendToGoogleTiles() {
       const brand = document.getElementById('formBrand').value.trim().toUpperCase();
       const code = document.getElementById('formCode').value.trim().toUpperCase();
+      const ral = document.getElementById('formRal').value.trim().toUpperCase();
       const finish = document.getElementById('formFinish').value.toUpperCase();
-      const qty = parseFloat(document.getElementById('formQty').value) || 0.00;
+      const qty = parseFloat(document.getElementById('formQty').value) || 0.0;
+      
+      const btn = document.getElementById('submitBtn');
+      const status = document.getElementById('statusMessage');
 
-      if (!brand || !code) {
-        alert("Please state both the Manufacturer and Stock Code.");
+      if (!brand) {
+        alert("Please state the Manufacturer.");
         return;
       }
 
-      const existingIndex = inventory.findIndex(item => 
-        item.brand.toUpperCase() === brand && 
-        item.code.toUpperCase() === code && 
-        item.finish === finish
-      );
-
-      // Keep backend rule logic intact for structural integrity
-      const step = (brand === 'AXALTA' && finish === 'PRIMER') ? 1.0 : 0.25;
-
-      if (existingIndex > -1) {
-        inventory[existingIndex].qty = qty;
-      } else {
-        inventory.push({
-          id: 'p_' + Date.now(),
-          brand,
-          code,
-          finish,
-          qty,
-          step
-        });
-      }
-
-      saveAndRefresh();
-      
-      document.getElementById('formCode').value = "";
-      document.getElementById('formQty').value = "0.00";
-      
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Swapped tap modifications to universally click by 0.25 
-    function adjustQty(id, direction) {
-      const item = inventory.find(i => i.id === id);
-      if (!item) return;
-
-      if (direction === 'plus') {
-        item.qty = parseFloat((item.qty + 0.25).toFixed(2));
-      } else if (direction === 'minus') {
-        item.qty = parseFloat((item.qty - 0.25).toFixed(2));
-        if (item.qty < 0) item.qty = 0;
-      }
-      saveAndRefresh();
-    }
-
-    function directTypeQty(id, value) {
-      const item = inventory.find(i => i.id === id);
-      if (item) {
-        item.qty = parseFloat(value) || 0.00;
-        localStorage.setItem('fullStockInventory', JSON.stringify(inventory));
-      }
-    }
-
-    function exportToCSV() {
-      if (inventory.length === 0) {
-        alert("No stock tracked to download yet.");
+      if (GOOGLE_SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+        alert("Setup Error: You forgot to paste your Google Web App URL into the code script.");
         return;
       }
 
-      let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Manufacturer,Stock Code / RAL,Finish,Boxes Total\r\n";
+      btn.disabled = true;
+      btn.innerText = "⚡ Uploading Data...";
+      status.style.display = "block";
+      status.style.color = "#2563eb";
+      status.innerText = "Sending row to Google Sheets & uploading image...";
 
-      inventory.forEach(item => {
-        let row = `"${item.brand}","${item.code}","${item.finish}",${item.qty.toFixed(2)}`;
-        csvContent += row + "\r\n";
-      });
+      const payload = {
+        brand: brand,
+        code: code,
+        ral: ral,
+        finish: finish,
+        qty: qty,
+        image: currentBase64Image
+      };
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `County_Coatings_Full_Stock_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-
-    function toggleView() {
-      currentView = (currentView === 'all') ? 'sheet' : 'all';
-      document.getElementById('viewToggleBtn').innerText = (currentView === 'all') ? 'Sheet View' : 'Show All';
-      renderList();
-    }
-
-    function resetAll() {
-      if (confirm("Reset everything back to 0 items? This wipes your active device session data completely.")) {
-        inventory = [];
-        saveAndRefresh();
-      }
-    }
-
-    function saveAndRefresh() {
-      localStorage.setItem('fullStockInventory', JSON.stringify(inventory));
-      renderList();
-    }
-
-    function renderList() {
-      const container = document.getElementById('powderList');
-      const searchTerm = document.getElementById('searchInput').value.toUpperCase();
-      container.innerHTML = "";
-
-      const sortedInventory = [...inventory].sort((a, b) => {
-        if (a.brand !== b.brand) {
-          return a.brand.localeCompare(b.brand);
-        }
-        return a.code.localeCompare(b.code);
-      });
-
-      sortedInventory.forEach(item => {
-        const matchesSearch = item.brand.includes(searchTerm) || 
-                              item.code.includes(searchTerm) || 
-                              item.finish.includes(searchTerm);
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        cache: "no-cache",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        status.style.color = "#16a34a";
+        status.innerText = "🎉 Successfully saved to Google Sheet!";
         
-        const matchesView = (currentView === 'all') || (currentView === 'sheet' && item.qty > 0);
-
-        if (matchesSearch && matchesView) {
-          const card = document.createElement('div');
-          card.className = "powder-card";
-
-          card.innerHTML = `
-            <div class="powder-info">
-              <div class="powder-title">${item.brand} - ${item.code}</div>
-              <div class="powder-meta">${item.finish}</div>
-            </div>
-            <div class="counter-controls">
-              <button class="btn-counter" onclick="adjustQty('${item.id}', 'minus')">-0.25</button>
-              <input type="number" class="qty-display" value="${item.qty.toFixed(2)}" step="0.25" onchange="directTypeQty('${item.id}', this.value)">
-              <button class="btn-counter" onclick="adjustQty('${item.id}', 'plus')">+0.25</button>
-            </div>
-          `;
-          container.appendChild(card);
-        }
+        // Reset form variables safely
+        document.getElementById('formCode').value = "";
+        document.getElementById('formRal').value = "";
+        document.getElementById('formQty').value = "0.0";
+        document.getElementById('formPhoto').value = "";
+        document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
+        document.getElementById('fileLabel').style.background = "#e2e8f0";
+        currentBase64Image = "";
+      })
+      .catch(err => {
+        status.style.color = "#dc2626";
+        status.innerText = "❌ Upload failed. Check internet connection.";
+        console.error(err);
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerText = "☁️ Upload & Save Row";
+        setTimeout(() => { status.style.display = "none"; }, 4000);
       });
-
-      if (container.innerHTML === "") {
-        container.innerHTML = `<div style="text-align:center; padding:40px; color:#64748b; font-size:0.95rem;">No boxes logged yet. Use the tool above to add boxes as you walk the floor.</div>`;
-      }
     }
   </script>
 </body>
