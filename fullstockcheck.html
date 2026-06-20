@@ -73,13 +73,11 @@
       font-size: 1rem; background-color: #f8fafc; color: var(--text); text-transform: uppercase;
     }
 
-    /* Inline sliding input layout for special option */
     #specialBrandGroup {
       margin-top: 8px;
       display: none;
     }
 
-    /* Clean segment style switch for thumb selection */
     .toggle-segment {
       display: flex;
       background: #e2e8f0;
@@ -104,30 +102,65 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    /* Chunky Right Thumb Qty Selector Panel */
-    .qty-tile-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .qty-tile {
-      background: #f1f5f9;
-      border: 2px solid #cbd5e1;
-      padding: 16px 0;
-      text-align: center;
+    .weight-calculator {
+      background: #f8fafc;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #334155;
+      padding: 12px;
+    }
+
+    .weight-display-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .weight-live-readout {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .btn-clear-qty {
+      background: #e2e8f0;
+      border: none;
+      color: #475569;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
+    }
+
+    .weight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .weight-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .weight-btn {
+      flex: 1;
+      padding: 14px 0;
+      text-align: center;
+      border-radius: 6px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
       user-select: none;
     }
-    .qty-tile.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: white;
-    }
+
+    .btn-plus { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .btn-minus { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .weight-btn:active { opacity: 0.7; }
 
     .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
     .file-input-label {
@@ -160,7 +193,6 @@
     <h2>Log Box Direct to Google Sheet</h2>
     <div class="form-grid">
       
-      <!-- Manufacturer Select Dropdown -->
       <div class="form-group">
         <label>Manufacturer</label>
         <select id="formBrandSelect" class="form-control" onchange="checkSpecialBrand(this.value)">
@@ -172,7 +204,6 @@
           <option value="SPECIAL">SPECIAL (TYPE NEW)...</option>
         </select>
         
-        <!-- Hidden input field pops open if 'SPECIAL' is chosen -->
         <div id="specialBrandGroup">
           <input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE SPECIAL BRAND NAME...">
         </div>
@@ -183,12 +214,12 @@
         <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
       </div>
 
-      <!-- Color Coding Standard Standard Toggle Logic -->
       <div class="form-group">
         <label>Standard Type</label>
         <div class="toggle-segment">
           <div class="toggle-option active" id="optRal" onclick="setStandard('RAL')">RAL</div>
           <div class="toggle-option" id="optBs" onclick="setStandard('BS')">BS</div>
+          <div class="toggle-option" id="optSpecial" onclick="setStandard('SPECIAL')">SPECIAL</div>
         </div>
       </div>
 
@@ -208,14 +239,23 @@
         </select>
       </div>
       
-      <!-- Right Thumb Selection Box Layout Tile Block -->
       <div class="form-group">
-        <label>Boxes Found (20kg Scale Fraction)</label>
-        <div class="qty-tile-grid">
-          <div class="qty-tile" id="tile25" onclick="setQty(0.25)">0.25</div>
-          <div class="qty-tile" id="tile50" onclick="setQty(0.50)">0.50</div>
-          <div class="qty-tile" id="tile75" onclick="setQty(0.75)">0.75</div>
-          <div class="qty-tile" id="tile100" onclick="setQty(1.00)">1.00</div>
+        <label>Total Weight Found</label>
+        <div class="weight-calculator">
+          <div class="weight-display-wrapper">
+            <div class="weight-live-readout" id="weightReadout">0 kg</div>
+            <button class="btn-clear-qty" onclick="resetWeightCounter()">❌ Reset</button>
+          </div>
+          <div class="weight-grid">
+            <div class="weight-row">
+              <button class="weight-btn btn-minus" onclick="modifyWeight(-1)">-1kg</button>
+              <button class="weight-btn btn-plus" onclick="modifyWeight(1)">+1kg</button>
+            </div>
+            <div class="weight-row">
+              <button class="weight-btn btn-minus" onclick="modifyWeight(-5)">-5kg</button>
+              <button class="weight-btn btn-plus" onclick="modifyWeight(5)">+5kg</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -233,12 +273,11 @@
   </div>
 
   <script>
-    // ⚠️ PASTE YOUR GOOGLE WEB APP URL INSIDE THE QUOTES BELOW:
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
 
     let currentBase64Image = "";
     let selectedStandard = "RAL";
-    let selectedQty = 0.00;
+    let activeKilos = 0;
 
     function checkSpecialBrand(value) {
       const specialGroup = document.getElementById('specialBrandGroup');
@@ -254,25 +293,32 @@
       selectedStandard = type;
       document.getElementById('optRal').classList.toggle('active', type === 'RAL');
       document.getElementById('optBs').classList.toggle('active', type === 'BS');
+      document.getElementById('optSpecial').classList.toggle('active', type === 'SPECIAL');
       
       const label = document.getElementById('colorLabel');
       const input = document.getElementById('formRal');
+      
       if (type === 'RAL') {
         label.innerText = "RAL Code";
         input.placeholder = "E.G. 7016";
-      } else {
+      } else if (type === 'BS') {
         label.innerText = "BS Code";
         input.placeholder = "E.G. 18B25";
+      } else {
+        label.innerText = "Special Color Name";
+        input.placeholder = "E.G. CANDY APPLE RED / CHROME";
       }
     }
 
-    function setQty(val) {
-      // Toggle color state across our tiles to visually map active choices
-      selectedQty = val;
-      document.getElementById('tile25').classList.toggle('active', val === 0.25);
-      document.getElementById('tile50').classList.toggle('active', val === 0.50);
-      document.getElementById('tile75').classList.toggle('active', val === 0.75);
-      document.getElementById('tile100').classList.toggle('active', val === 1.00);
+    function modifyWeight(amount) {
+      activeKilos += amount;
+      if (activeKilos < 0) activeKilos = 0;
+      document.getElementById('weightReadout').innerText = activeKilos + " kg";
+    }
+
+    function resetWeightCounter() {
+      activeKilos = 0;
+      document.getElementById('weightReadout').innerText = "0 kg";
     }
 
     function handlePhotoSelect() {
@@ -308,12 +354,12 @@
         alert("Please select or type a Manufacturer.");
         return;
       }
-      if (selectedQty === 0) {
-        alert("Please tap a quantity tile box fraction before submitting.");
+      if (!colorVal) {
+        alert("Please enter a color value or name.");
         return;
       }
-      if (GOOGLE_SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-        alert("Setup Error: You forgot to paste your Google Web App URL into the code script.");
+      if (activeKilos === 0) {
+        alert("Please add weight in kilos before submitting.");
         return;
       }
 
@@ -323,15 +369,16 @@
       status.style.color = "#2563eb";
       status.innerText = "Sending row to Google Sheets & uploading image...";
 
-      // Standard type prefixed automatically right inside backend payload string
-      const fullColorCodeString = `${selectedStandard} ${colorVal}`;
+      // If it's a Special color, don't prefix with "SPECIAL " to avoid cluttering your text layout
+      const fullColorCodeString = (selectedStandard === 'SPECIAL') ? colorVal : `${selectedStandard} ${colorVal}`;
+      const dynamicWeightString = `${activeKilos} kg`;
 
       const payload = {
         brand: brand,
         code: code,
         ral: fullColorCodeString,
         finish: finish,
-        qty: selectedQty,
+        qty: dynamicWeightString, 
         image: currentBase64Image
       };
 
@@ -346,7 +393,6 @@
         status.style.color = "#16a34a";
         status.innerText = "🎉 Successfully saved to Google Sheet!";
         
-        // Reset variables
         document.getElementById('formCode').value = "";
         document.getElementById('formRal').value = "";
         document.getElementById('formBrandSelect').value = "AXALTA";
@@ -356,9 +402,8 @@
         document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
         document.getElementById('fileLabel').style.background = "#e2e8f0";
         
-        // Clear custom button selections
         currentBase64Image = "";
-        setQty(0.00); 
+        resetWeightCounter();
         setStandard('RAL');
       })
       .catch(err => {
