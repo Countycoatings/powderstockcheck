@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sadie's Boyfriend Selector</title>
+    <!-- Library needed to capture the dossier as an image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* The Simpsons Theme Styling */
+        /* The Simpsons Theme Styling - LOCKED IN */
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
         body {
-            background-color: #70D1FE; 
+            background-color: #70D1FE; /* Springfield Sky Blue */
             font-family: 'Fredoka One', 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 20px;
@@ -22,8 +23,9 @@
             margin: 0 auto;
         }
 
+        /* Chunky Cartoon Containers */
         .card {
-            background-color: #FFD90F; 
+            background-color: #FFD90F; /* Classic Simpsons Yellow */
             border: 5px solid #000;
             border-radius: 20px;
             padding: 20px;
@@ -32,7 +34,7 @@
         }
 
         .header {
-            background-color: #FF69B4; 
+            background-color: #FF69B4; /* Lard Lad Donut Pink */
             text-align: center;
             border: 5px solid #000;
             border-radius: 20px;
@@ -55,6 +57,7 @@
             padding-bottom: 10px;
         }
 
+        /* Form Elements */
         label {
             display: block;
             margin-bottom: 5px;
@@ -75,6 +78,7 @@
             background-color: #FFF;
         }
 
+        /* Image Preview Box */
         .image-preview {
             width: 100%;
             height: 250px;
@@ -102,6 +106,7 @@
             cursor: pointer;
         }
 
+        /* Chunky Buttons */
         button {
             width: 100%;
             padding: 15px;
@@ -144,12 +149,12 @@
 <body>
 
 <div class="app-container">
-    
+
     <div class="header">
         <h1>BOYFRIEND SELECTOR</h1>
     </div>
 
-    <!-- Phase 1: The Dossier -->
+    <!-- Phase 1: The Dossier (File Report Screen) -->
     <div class="card" id="dossier-card">
         <h2>1. Candidate Dossier</h2>
         
@@ -163,6 +168,7 @@
         <label for="name">Suspect Name:</label>
         <input type="text" id="name" placeholder="First Name / Last Name">
 
+        <!-- Real-Life Job Options -->
         <label for="job">Employment Status:</label>
         <select id="job">
             <option value="Unknown">-- Select Industry --</option>
@@ -178,6 +184,7 @@
             <option value="Unemployed">Between Opportunities</option>
         </select>
 
+        <!-- Real-Life Vibe Options -->
         <label for="vibe">Looks & Vibe:</label>
         <select id="vibe">
             <option value="Unknown">-- Select Overall Vibe --</option>
@@ -202,7 +209,7 @@
         <button class="btn-share" onclick="shareDossier()">📲 SHARE DOSSIER TO DAD</button>
         <button class="btn-save" onclick="saveDossierImage()">💾 SAVE TO CAMERA ROLL</button>
         
-        <div class="disclaimer">Share button sends the picture and text via your phone's native menu!</div>
+        <div class="disclaimer">Share sends the dossier picture & report text directly to Dad!</div>
     </div>
 
 </div>
@@ -221,37 +228,37 @@
         }
     });
 
-    // NEW FEATURE: Smart Share (Sends Picture + Text)
+    // Smart Share Feature (Takes screenshot of the Dossier and opens Phone Share Menu)
     async function shareDossier() {
         const dossierCard = document.getElementById('dossier-card');
         const fileInput = document.getElementById('pic');
         const fileInputLabel = document.querySelector('label[for="pic"]');
         
-        // Hide the file input button during capture
+        // Hide the ugly "Choose File" button so it doesn't show up in the report image
         fileInput.style.display = 'none';
         fileInputLabel.style.display = 'none';
 
-        // Take the screenshot
+        // Take the screenshot of the dossier
         const canvas = await html2canvas(dossierCard, {
-            backgroundColor: "#70D1FE",
+            backgroundColor: "#70D1FE", // Matches the Springfield Sky Blue
             scale: 2, 
             borderRadius: 20
         });
 
-        // Put the file input button back
+        // Put the file button back on the screen
         fileInput.style.display = 'block';
         fileInputLabel.style.display = 'block';
 
-        // Convert the screenshot into a shareable image file
+        // Convert the screenshot to an image file and share it
         canvas.toBlob(async function(blob) {
             const file = new File([blob], "candidate-dossier.png", { type: "image/png" });
             
-            // Build the text that will go along with the image
+            // Build the text that will be sent with the picture
             const name = document.getElementById('name').value || "Unknown Suspect";
             const flags = document.getElementById('red-flag').value;
             const textMessage = `🚨 BOYFRIEND SELECTOR 🚨\nDad, review candidate: ${name}. Red flag level is ${flags}/10. Please advise: 👍 APPROVE, 🔍 NEED INTEL, or 🚫 VETO.`;
 
-            // Check if the phone supports sharing files (Most modern iOS/Android devices do)
+            // Open the phone's native share menu (where Sadie can tap WhatsApp -> Dad)
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({
@@ -260,16 +267,15 @@
                         text: textMessage
                     });
                 } catch (error) {
-                    console.log('Share was cancelled or failed.', error);
+                    console.log('Share was cancelled or failed.');
                 }
             } else {
-                // Fallback for older devices/desktop browsers
-                alert("Your device doesn't support direct image sharing. Use the 'Save to Camera Roll' button instead, then text it to Dad!");
+                alert("Your device doesn't support direct image sharing. Use the 'Save to Camera Roll' button instead, then text the picture to Dad!");
             }
         });
     }
 
-    // Handle standard image saving
+    // Standard Save Image Function (In case she just wants to save it to her phone)
     function saveDossierImage() {
         const dossierCard = document.getElementById('dossier-card');
         const fileInput = document.getElementById('pic');
