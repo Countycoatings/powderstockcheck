@@ -37,7 +37,7 @@
       padding-bottom: 40px;
     }
 
-    /* --- TIMBER-TONE HEADER SYSTEM --- */
+    /* --- CENTRED HEADER SYSTEM --- */
     header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -97,13 +97,12 @@
       border-color: var(--primary);
     }
 
-    /* Target specific dark-themed options inside dropdown overrides */
     select.form-control option {
       background-color: var(--card-bg);
       color: var(--text);
     }
 
-    #specialBrandGroup {
+    #specialBrandGroup, #specialFinishGroup {
       margin-top: 8px;
       display: none;
     }
@@ -262,15 +261,20 @@
         <input type="text" id="formRal" class="form-control" placeholder="E.G. 7016">
       </div>
       
+      <!-- Finish Dropdown with Dynamic Special Option -->
       <div class="form-group">
         <label>Finish / Gloss</label>
-        <select id="formFinish" class="form-control">
+        <select id="formFinish" class="form-control" onchange="checkSpecialFinish(this.value)">
           <option value="MATT">MATT</option>
           <option value="SATIN">SATIN</option>
           <option value="GLOSS">GLOSS</option>
           <option value="PRIMER">PRIMER</option>
-          <option value="SPECIALTY">SPECIALTY</option>
+          <option value="SPECIALTY">SPECIALTY (TYPE CUSTOM)...</option>
         </select>
+
+        <div id="specialFinishGroup">
+          <input type="text" id="formFinishSpecial" class="form-control" placeholder="E.G. FINE TEXTURE, LEATHERETTE, RIPPLE...">
+        </div>
       </div>
       
       <!-- Rapid Weight Selector Panel Component -->
@@ -313,6 +317,16 @@
       if (value === 'SPECIAL') {
         specialGroup.style.display = 'block';
         document.getElementById('formBrandSpecial').focus();
+      } else {
+        specialGroup.style.display = 'none';
+      }
+    }
+
+    function checkSpecialFinish(value) {
+      const specialGroup = document.getElementById('specialFinishGroup');
+      if (value === 'SPECIALTY') {
+        specialGroup.style.display = 'block';
+        document.getElementById('formFinishSpecial').focus();
       } else {
         specialGroup.style.display = 'none';
       }
@@ -372,9 +386,14 @@
       }
       brand = brand.toUpperCase();
 
+      let finish = document.getElementById('formFinish').value;
+      if (finish === 'SPECIALTY') {
+        finish = document.getElementById('formFinishSpecial').value.trim();
+      }
+      finish = finish.toUpperCase();
+
       const code = document.getElementById('formCode').value.trim().toUpperCase();
       const colorVal = document.getElementById('formRal').value.trim().toUpperCase();
-      const finish = document.getElementById('formFinish').value.toUpperCase();
       
       const btn = document.getElementById('submitBtn');
       const status = document.getElementById('statusMessage');
@@ -385,6 +404,10 @@
       }
       if (!colorVal) {
         alert("Please enter a color value or name.");
+        return;
+      }
+      if (!finish) {
+        alert("Please select or type a Finish.");
         return;
       }
       if (activeKilos === 0) {
@@ -421,11 +444,17 @@
         status.style.color = "var(--success)";
         status.innerText = "🎉 Successfully saved to Google Sheet!";
         
+        // Reset fields safely
         document.getElementById('formCode').value = "";
         document.getElementById('formRal').value = "";
         document.getElementById('formBrandSelect').value = "AXALTA";
         document.getElementById('specialBrandGroup').style.display = 'none';
         document.getElementById('formBrandSpecial').value = "";
+        
+        document.getElementById('formFinish').value = "MATT";
+        document.getElementById('specialFinishGroup').style.display = 'none';
+        document.getElementById('formFinishSpecial').value = "";
+        
         document.getElementById('formPhoto').value = "";
         document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
         document.getElementById('fileLabel').style.background = "var(--input-bg)";
