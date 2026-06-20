@@ -9,7 +9,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
         body {
-            background-color: #70D1FE; /* Springfield Sky Blue */
+            background-color: #70D1FE; 
             font-family: 'Fredoka One', 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 20px;
@@ -21,9 +21,8 @@
             margin: 0 auto;
         }
 
-        /* Chunky Cartoon Containers */
         .card {
-            background-color: #FFD90F; /* Classic Simpsons Yellow */
+            background-color: #FFD90F; 
             border: 5px solid #000;
             border-radius: 20px;
             padding: 20px;
@@ -32,7 +31,7 @@
         }
 
         .header {
-            background-color: #FF69B4; /* Lard Lad Donut Pink */
+            background-color: #FF69B4; 
             text-align: center;
             border: 5px solid #000;
             border-radius: 20px;
@@ -55,7 +54,6 @@
             padding-bottom: 10px;
         }
 
-        /* Form Elements */
         label {
             display: block;
             margin-bottom: 5px;
@@ -63,7 +61,7 @@
         }
 
         input[type="text"], 
-        input[type="number"], 
+        input[type="tel"], 
         select, 
         input[type="file"] {
             width: 100%;
@@ -85,14 +83,8 @@
             cursor: pointer;
         }
 
-        /* Chunky Buttons */
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-        }
-
         button {
+            width: 100%;
             padding: 15px;
             font-size: 20px;
             font-family: 'Fredoka One', cursive;
@@ -108,35 +100,18 @@
             box-shadow: 0px 0px 0px #000;
         }
 
-        .btn-approve {
-            background-color: #32CD32; /* Radioactive Green */
+        .btn-whatsapp {
+            background-color: #25D366; /* WhatsApp Green */
             color: white;
             text-shadow: 2px 2px 0 #000;
+            margin-top: 10px;
         }
-
-        .btn-intel {
-            background-color: #FFA500; /* Orange */
-            color: white;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        .btn-veto {
-            background-color: #FF0000; /* Red */
-            color: white;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        /* Status Output */
-        #status-message {
+        
+        .disclaimer {
+            font-family: sans-serif;
+            font-size: 12px;
             text-align: center;
-            font-size: 24px;
-            margin-top: 20px;
-            display: none;
-            padding: 15px;
-            border: 4px solid #000;
-            border-radius: 10px;
-            background-color: white;
-            box-shadow: 5px 5px 0px #000;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -148,6 +123,7 @@
         <h1>SADIE'S BOYFRIEND SELECTOR</h1>
     </div>
 
+    <!-- Phase 1: The Dossier -->
     <div class="card" id="dossier-card">
         <h2>1. Candidate Dossier</h2>
         
@@ -159,21 +135,21 @@
 
         <label for="job">Employment Status:</label>
         <select id="job">
-            <option value="">-- Select One --</option>
-            <option value="gainful">Gainfully Employed</option>
-            <option value="nuclear">Nuclear Power Plant Worker</option>
-            <option value="dj">Aspiring DJ / Musician</option>
-            <option value="bartender">Bartender at Moe's</option>
-            <option value="student">Professional Student</option>
+            <option value="Unknown">-- Select One --</option>
+            <option value="Gainfully Employed">Gainfully Employed</option>
+            <option value="Nuclear Power Plant Worker">Nuclear Power Plant Worker</option>
+            <option value="Aspiring DJ">Aspiring DJ / Musician</option>
+            <option value="Bartender">Bartender at Moe's</option>
+            <option value="Professional Student">Professional Student</option>
         </select>
 
         <label for="vibe">Looks & Vibe:</label>
         <select id="vibe">
-            <option value="">-- Select One --</option>
-            <option value="skater">Skater Boy</option>
-            <option value="nerd">Lovable Nerd</option>
-            <option value="finance">Finance Bro</option>
-            <option value="golden">Golden Retriever Energy</option>
+            <option value="Unknown">-- Select One --</option>
+            <option value="Skater Boy">Skater Boy</option>
+            <option value="Lovable Nerd">Lovable Nerd</option>
+            <option value="Finance Bro">Finance Bro</option>
+            <option value="Golden Retriever">Golden Retriever Energy</option>
         </select>
 
         <div class="slider-container">
@@ -182,39 +158,50 @@
         </div>
     </div>
 
+    <!-- Phase 2: WhatsApp Integration -->
     <div class="card">
-        <h2>2. Dad Review Dashboard</h2>
-        <div class="button-group">
-            <button class="btn-approve" onclick="dadAction('APPROVES')">👍 DAD APPROVES</button>
-            <button class="btn-intel" onclick="dadAction('INTEL')">🔍 NEEDS MORE INTEL</button>
-            <button class="btn-veto" onclick="dadAction('VETO')">🚫 THE VETO</button>
-        </div>
+        <h2>2. Dispatch to Dad</h2>
+        <label for="dad-phone">Dad's WhatsApp # (Optional):</label>
+        <input type="tel" id="dad-phone" placeholder="e.g., 15551234567 (No +, dashes, or spaces)">
+        
+        <button class="btn-whatsapp" onclick="sendToWhatsApp()">💬 TEXT DAD FOR APPROVAL</button>
+        <div class="disclaimer">Dad will receive a formatted report to review!</div>
     </div>
-
-    <div id="status-message"></div>
 
 </div>
 
 <script>
-    function dadAction(action) {
-        const name = document.getElementById('name').value || "Unknown Candidate";
-        const statusBox = document.getElementById('status-message');
+    function sendToWhatsApp() {
+        // Gather the data from the dossier
+        const name = document.getElementById('name').value || "Unknown Suspect";
         
-        statusBox.style.display = 'block';
+        const jobSelect = document.getElementById('job');
+        const job = jobSelect.options[jobSelect.selectedIndex].text;
+        
+        const vibeSelect = document.getElementById('vibe');
+        const vibe = vibeSelect.options[vibeSelect.selectedIndex].text;
+        
+        const flags = document.getElementById('red-flag').value;
+        const phone = document.getElementById('dad-phone').value;
 
-        if (action === 'APPROVES') {
-            statusBox.style.backgroundColor = '#32CD32';
-            statusBox.style.color = 'white';
-            statusBox.innerHTML = `✅ DAD SAYS: "${name} seems like a solid guy. Excellent."`;
-        } else if (action === 'INTEL') {
-            statusBox.style.backgroundColor = '#FFA500';
-            statusBox.style.color = 'white';
-            statusBox.innerHTML = `🧐 DAD SAYS: "Hold up. Can ${name} change a tire? Investigate."`;
-        } else if (action === 'VETO') {
-            statusBox.style.backgroundColor = '#FF0000';
-            statusBox.style.color = 'white';
-            statusBox.innerHTML = `❌ DAD SAYS: "Absolutely not. ${name} is DENIED. D'oh!"`;
+        // Format the message for WhatsApp
+        const message = `🚨 *SADIE'S BOYFRIEND SELECTOR* 🚨\n\nDad, a new candidate requires clearance.\n\n*Name:* ${name}\n*Employment:* ${job}\n*Vibe:* ${vibe}\n*Red Flag Level:* ${flags}/10\n\nPlease review the suspect and reply with your verdict:\n\n👍 APPROVE\n🔍 NEED MORE INTEL\n🚫 VETO`;
+
+        // Encode the message so it works in a URL
+        const encodedMessage = encodeURIComponent(message);
+        
+        // Build the WhatsApp link
+        let whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+        
+        // If a phone number was entered, route it directly to that chat
+        if (phone) {
+            // Strips out any accidental spaces or dashes the user might type
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+            whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
         }
+
+        // Open WhatsApp in a new tab/app
+        window.open(whatsappUrl, '_blank');
     }
 </script>
 
