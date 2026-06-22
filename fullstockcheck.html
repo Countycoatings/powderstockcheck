@@ -3,272 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>County Coatings - Cloud Stock Check</title>
-  
+  <title>StockCheck Pro</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Full Stock">
-
   <style>
-    :root {
-      --primary: #3b82f6;       
-      --danger: #ef4444;        
-      --success: #22c55e;       
-      --bg: #0f172a;            
-      --card-bg: #1e293b;       
-      --text: #f8fafc;          
-      --text-muted: #94a3b8;    
-      --border: #334155;        
-      --input-bg: #0f172a;      
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-
-    body { background-color: var(--bg); color: var(--text); padding-top: 105px; padding-bottom: 40px; }
-
-    header {
-      position: fixed; top: 0; left: 0; right: 0; background-color: #1e293b; color: var(--text);
-      padding: 12px 16px; z-index: 1000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-      display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid var(--border);
-    }
-    header h1 { font-size: 1.3rem; font-weight: 800; }
-    .header-subtitle { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
-
-    .entry-form-container { background: var(--card-bg); margin: 12px auto; max-width: 600px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-    .form-grid { display: flex; flex-direction: column; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
-    .form-control { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 1rem; background-color: var(--input-bg); color: var(--text); text-transform: uppercase; }
-    .form-control:focus { outline: none; border-color: var(--primary); }
+    :root { --primary: #2563eb; --bg: #020617; --card: #0f172a; --text: #f1f5f9; --border: #1e293b; }
+    body { background: var(--bg); color: var(--text); padding-top: 140px; font-family: 'Inter', system-ui, sans-serif; }
     
-    .no-native-keyboard { caret-color: transparent; cursor: pointer; }
-
-    .toggle-segment { display: flex; background: var(--input-bg); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
-    .toggle-option { flex: 1; text-align: center; padding: 10px 0; font-weight: 700; cursor: pointer; border-radius: 6px; color: var(--text-muted); }
-    .toggle-option.active { background: var(--card-bg); color: var(--primary); }
-
-    #specialBrandGroup, #specialFinishGroup, #customKeypadWrapper { margin-top: 8px; display: none; }
-
-    .custom-keypad-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
-    .keypad-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .keypad-alpha-strip { display: flex; flex-direction: column; gap: 8px; }
-    .key-btn { background: #334155; color: var(--text); border: none; padding: 16px 0; font-size: 1.25rem; font-weight: 800; border-radius: 6px; cursor: pointer; }
-    .key-btn:active { background: #475569; }
-    .key-btn.btn-danger { background: #7f1d1d; color: #ef4444; }
-    .key-btn.btn-success { background: #14532d; color: #4ade80; }
-    .key-btn.btn-alpha { background: #1e293b; color: #60a5fa; border: 1px solid var(--border); }
-
-    .weight-calculator { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
-    .weight-display-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed var(--border); }
-    .weight-live-readout { font-size: 1.6rem; font-weight: 900; color: var(--primary); }
-    .btn-clear-qty { background: var(--border); border: none; color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    .weight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .weight-btn { padding: 18px 0; border-radius: 8px; font-weight: 800; border: none; cursor: pointer; }
-    .btn-plus { background: #1e3a8a; color: #60a5fa; }
+    header { 
+      position: fixed; top: 0; left: 0; right: 0; padding: 20px; 
+      background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); 
+      text-align: center; border-bottom: 1px solid var(--border); z-index: 1000; 
+    }
+    header img { max-height: 60px; width: auto; }
     
-    .file-input-wrapper { position: relative; width: 100%; }
-    .file-input-label { display: block; padding: 12px; background: var(--input-bg); color: var(--text); border-radius: 6px; text-align: center; border: 1px dashed var(--border); cursor: pointer; }
-    .hidden-file-input { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+    #lastSyncStatus { font-size: 0.7rem; color: #4ade80; margin-top: 8px; opacity: 0; transition: 0.5s; font-weight: bold; }
+    
+    .card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); max-width: 450px; margin: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .input-field { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--border); background: #020617; color: white; font-size: 1.1rem; font-weight: 600; }
+    
+    .toggle { display: flex; background: #020617; padding: 4px; border-radius: 12px; border: 2px solid var(--border); }
+    .t-opt { flex: 1; padding: 10px; text-align: center; font-size: 0.8rem; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 8px; }
+    .t-opt.active { background: var(--primary); color: white; }
 
-    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; margin-top: 10px; }
-    #statusMessage { text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9rem; display: none; }
+    #customKeypadWrapper { width: 75%; margin: 15px auto; display: none; }
+    .keypad-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; }
+    .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .key-btn { background: #1e293b; border: none; padding: 14px; border-radius: 8px; color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+    .key-btn:active { background: var(--primary); }
+    .key-btn.alpha { background: #334155; color: #60a5fa; }
+    
+    .btn-main { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; font-size: 1rem; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>County Coatings</h1>
-    <div class="header-subtitle">Full Stock Check</div>
-  </header>
+<header>
+  <img src="https://drive.google.com/uc?export=view&id=1qaUwN4joV85WqlNU6XaVkkEDdQydYtVI" alt="County Coatings Logo">
+  <div id="lastSyncStatus">PREVIOUS ENTRY UPLOADED</div>
+</header>
 
-  <div class="entry-form-container">
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Manufacturer</label>
-        <select id="formBrandSelect" class="form-control" onchange="checkSpecialBrand(this.value)">
-          <option value="AXALTA">AXALTA</option>
-          <option value="THERMASET">THERMASET</option>
-          <option value="HMG">HMG</option>
-          <option value="CROMADEX">CROMADEX</option>
-          <option value="WITHAM">WITHAM</option>
-          <option value="SPECIAL">SPECIAL (TYPE NEW)...</option>
-        </select>
-        <div id="specialBrandGroup"><input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE SPECIAL BRAND NAME..."></div>
-      </div>
-      
-      <div class="form-group">
-        <label>Stock Code</label>
-        <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
-      </div>
+<div class="card">
+  <div class="form-group">
+    <label>Manufacturer</label>
+    <select id="brand" class="input-field"><option>AXALTA</option><option>THERMASET</option><option>HMG</option></select>
+  </div>
 
-      <div class="form-group">
-        <label>Standard Type</label>
-        <div class="toggle-segment">
-          <div class="toggle-option active" id="optRal" onclick="setStandard('RAL')">RAL</div>
-          <div class="toggle-option" id="optBs" onclick="setStandard('BS')">BS</div>
-          <div class="toggle-option" id="optSpecial" onclick="setStandard('SPECIAL')">SPECIAL</div>
+  <div class="form-group">
+    <label>Standard</label>
+    <div class="toggle">
+      <div id="optRal" class="t-opt active" onclick="setStd('RAL')">RAL</div>
+      <div id="optBs" class="t-opt" onclick="setStd('BS')">BS</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Color Code</label>
+    <input type="text" id="color" class="input-field" readonly placeholder="TAP TO OPEN KEYPAD" onclick="document.getElementById('customKeypadWrapper').style.display='block'">
+    
+    <div id="customKeypadWrapper">
+      <div class="keypad-grid">
+        <div class="nums">
+          <button class="key-btn" onclick="press('1')">1</button><button class="key-btn" onclick="press('2')">2</button><button class="key-btn" onclick="press('3')">3</button>
+          <button class="key-btn" onclick="press('4')">4</button><button class="key-btn" onclick="press('5')">5</button><button class="key-btn" onclick="press('6')">6</button>
+          <button class="key-btn" onclick="press('7')">7</button><button class="key-btn" onclick="press('8')">8</button><button class="key-btn" onclick="press('9')">9</button>
+          <button class="key-btn" style="background:#166534" onclick="closePad()">✔️</button><button class="key-btn" onclick="press('0')">0</button><button class="key-btn" style="background:#991b1b" onclick="press('BACK')">⌫</button>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label id="colorLabel">RAL Code</label>
-        <input type="text" id="formColorText" class="form-control no-native-keyboard" placeholder="TAP TO OPEN KEYPAD..." readonly onclick="openCustomKeypad()" list="dynamicSuggestions">
-        <datalist id="dynamicSuggestions"></datalist>
-        
-        <div id="customKeypadWrapper">
-          <div class="custom-keypad-layout">
-            <div class="keypad-nums">
-              <button class="key-btn" type="button" onclick="pressKey('1')">1</button>
-              <button class="key-btn" type="button" onclick="pressKey('2')">2</button>
-              <button class="key-btn" type="button" onclick="pressKey('3')">3</button>
-              <button class="key-btn" type="button" onclick="pressKey('4')">4</button>
-              <button class="key-btn" type="button" onclick="pressKey('5')">5</button>
-              <button class="key-btn" type="button" onclick="pressKey('6')">6</button>
-              <button class="key-btn" type="button" onclick="pressKey('7')">7</button>
-              <button class="key-btn" type="button" onclick="pressKey('8')">8</button>
-              <button class="key-btn" type="button" onclick="pressKey('9')">9</button>
-              <button class="key-btn btn-success" type="button" onclick="closeCustomKeypad()">✔️ DONE</button>
-              <button class="key-btn" type="button" onclick="pressKey('0')">0</button>
-              <button class="key-btn btn-danger" type="button" onclick="pressKey('BACK')">⌫</button>
-            </div>
-            <div class="keypad-alpha-strip" id="alphaStrip">
-              <button class="key-btn btn-alpha" type="button" onclick="pressKey('A')">A</button>
-              <button class="key-btn btn-alpha" type="button" onclick="pressKey('B')">B</button>
-              <button class="key-btn btn-alpha" type="button" onclick="pressKey('C')">C</button>
-              <button class="key-btn btn-alpha" type="button" onclick="pressKey('D')">D</button>
-              <button class="key-btn btn-alpha" type="button" onclick="pressKey('E')">E</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Finish / Gloss</label>
-        <select id="formFinish" class="form-control" onchange="checkSpecialFinish(this.value)">
-          <option value="MATT">MATT</option>
-          <option value="SATIN">SATIN</option>
-          <option value="GLOSS">GLOSS</option>
-          <option value="PRIMER">PRIMER</option>
-          <option value="SPECIALTY">SPECIALTY (TYPE CUSTOM)...</option>
-        </select>
-        <div id="specialFinishGroup"><input type="text" id="formFinishSpecial" class="form-control" placeholder="E.G. FINE TEXTURE, LEATHERETTE..."></div>
-      </div>
-      
-      <div class="form-group">
-        <label>Total Weight Found</label>
-        <div class="weight-calculator">
-          <div class="weight-display-wrapper">
-            <div class="weight-live-readout" id="weightReadout">0 kg</div>
-            <button class="btn-clear-qty" type="button" onclick="resetWeightCounter()">❌ Reset</button>
-          </div>
-          <div class="weight-grid">
-            <button class="weight-btn btn-plus" type="button" onclick="modifyWeight(1)">+1 kg</button>
-            <button class="weight-btn btn-plus" type="button" onclick="modifyWeight(5)">+5 kg</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Visual Check (Save to Google Drive)</label>
-        <div class="file-input-wrapper">
-          <span class="file-input-label" id="fileLabel">📷 Take Box Photo</span>
-          <input type="file" accept="image/*" capture="environment" id="formPhoto" class="hidden-file-input" onchange="handlePhotoSelect()">
+        <div id="alphaStrip" class="nums" style="grid-template-columns: 1fr; display: none;">
+          <button class="key-btn alpha" onclick="press('A')">A</button><button class="key-btn alpha" onclick="press('B')">B</button>
+          <button class="key-btn alpha" onclick="press('C')">C</button><button class="key-btn alpha" onclick="press('D')">D</button>
+          <button class="key-btn alpha" onclick="press('E')">E</button>
         </div>
       </div>
     </div>
-    
-    <button class="btn-primary" type="button" id="submitBtn" onclick="sendToGoogleTiles()">☁️ Upload & Save Row</button>
-    <div id="statusMessage"></div>
   </div>
 
-  <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
-    const RAL_LIST = ["1000","1001","1002","1003","1004","1005","1006","1007","1011","1012","1013","1014","1015","1016","1017","1018","1019","1020","1021","1023","1024","1027","1028","1032","1033","1034","2000","2001","2002","2003","2004","2008","2009","2010","2011","2012","3000","3001","3002","3003","3004","3005","3007","3009","3011","3012","3013","3014","3015","3016","3017","3018","3020","3022","3027","3031","4001","4002","4003","4004","4005","4006","4007","4008","4009","5000","5001","5002","5003","5004","5005","5007","5008","5009","5010","5011","5012","5013","5014","5015","5017","5018","5019","5020","5021","5022","5023","5024","6000","6001","6002","6003","6004","6005","6006","6007","6008","6009","6010","6011","6012","6013","6014","6015","6016","6017","6018","6019","6020","6021","6022","6024","6025","6026","6027","6028","6029","6032","6033","6034","7000","7001","7002","7003","7004","7005","7006","7008","7009","7010","7011","7012","7013","7015","7016","7021","7022","7023","7024","7026","7030","7031","7032","7033","7034","7035","7036","7037","7038","7039","7040","7042","7043","7044","8000","8001","8002","8003","8004","8007","8008","8011","8012","8014","8015","8016","8017","8019","8022","8023","8024","8025","8028","9001","9002","9003","9004","9005","9010","9011","9016","9017","9018"];
-    const BS_LIST = ["00 A 01","00 A 05","00 A 09","00 A 13","02 C 33","02 C 37","02 C 39","02 C 40","04 B 15","04 B 17","04 B 21","04 C 31","04 C 33","04 C 37","04 C 39","04 D 44","04 D 45","04 E 49","04 E 51","04 E 53","04 E 55","04 E 56","04 E 58","06 C 35","06 C 37","06 C 39","06 C 40","06 D 43","06 D 45","06 E 50","06 E 51","06 E 56","08 B 15","08 B 17","08 B 29","08 C 31","08 C 35","08 C 37","08 D 41","08 E 51","08 E 55","10 A 03","10 B 15","10 B 17","10 B 23","10 B 25","10 C 31","10 C 33","10 C 35","10 C 39","10 D 43","10 D 45","10 E 49","10 E 50","10 E 53","12 B 15","12 B 17","12 B 21","12 B 25","12 C 31","12 C 33","12 C 37","12 D 45","12 E 55","12 F 51","14 C 31","14 C 35","14 C 39","14 C 40","14 E 49","14 E 50","14 E 51","14 E 53","16 C 37","16 D 45","16 E 53","18 B 17","18 B 21","18 B 25","18 C 31","18 C 35","18 C 39","18 E 49","18 E 50","18 E 51","18 E 53","20 C 33","20 C 37","20 C 40","20 D 45","20 E 51","20 E 53","20 E 56","22 B 15","22 B 17","22 D 41","22 D 45","24 C 33","24 C 39","24 E 53"];
+  <button class="btn-main" onclick="upload()">☁️ UPLOAD & RESET</button>
+</div>
 
-    let currentBase64Image = "", selectedStandard = "RAL", activeKilos = 0;
+<script>
+  let mode = 'RAL';
+  const GOOGLE_URL = "YOUR_DEPLOYMENT_URL_HERE";
 
-    window.addEventListener('DOMContentLoaded', () => setStandard('RAL'));
+  function setStd(m) {
+    mode = m;
+    document.getElementById('optRal').classList.toggle('active', m==='RAL');
+    document.getElementById('optBs').classList.toggle('active', m==='BS');
+    document.getElementById('alphaStrip').style.display = (m==='RAL') ? 'none' : 'grid';
+    document.getElementById('color').value = "";
+  }
 
-    function checkSpecialBrand(v) { document.getElementById('specialBrandGroup').style.display = (v === 'SPECIAL') ? 'block' : 'none'; }
-    function checkSpecialFinish(v) { document.getElementById('specialFinishGroup').style.display = (v === 'SPECIALTY') ? 'block' : 'none'; }
-    function openCustomKeypad() { if (selectedStandard !== 'SPECIAL') document.getElementById('customKeypadWrapper').style.display = 'block'; }
-    function closeCustomKeypad() { document.getElementById('customKeypadWrapper').style.display = 'none'; }
-
-    function setStandard(type) {
-      selectedStandard = type;
-      document.getElementById('optRal').classList.toggle('active', type === 'RAL');
-      document.getElementById('optBs').classList.toggle('active', type === 'BS');
-      document.getElementById('optSpecial').classList.toggle('active', type === 'SPECIAL');
-      document.getElementById('alphaStrip').style.display = (type === 'RAL') ? 'none' : 'flex';
-      
-      const inputField = document.getElementById('formColorText'), datalist = document.getElementById('dynamicSuggestions');
-      datalist.innerHTML = ""; inputField.value = ""; closeCustomKeypad();
-
-      if (type === 'SPECIAL') {
-        inputField.readOnly = false; inputField.removeAttribute("list");
-      } else {
-        inputField.readOnly = true; inputField.setAttribute("list", "dynamicSuggestions");
-        (type === 'RAL' ? RAL_LIST : BS_LIST).forEach(c => datalist.innerHTML += `<option value="${c}">`);
-      }
-    }
-
-    function pressKey(val) {
-      const field = document.getElementById('formColorText');
-      if (val === 'BACK') field.value = field.value.slice(0, -1);
-      else if (val === 'CLR') field.value = "";
-      else {
-        if (selectedStandard === 'BS' && (field.value.length === 2 || field.value.length === 4)) field.value += " " + val;
-        else field.value += val;
-      }
-      field.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    function modifyWeight(a) { activeKilos += a; document.getElementById('weightReadout').innerText = activeKilos + " kg"; }
-    function resetWeightCounter() { activeKilos = 0; document.getElementById('weightReadout').innerText = "0 kg"; }
-    function handlePhotoSelect() {
-      const file = document.getElementById('formPhoto').files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => { currentBase64Image = e.target.result; document.getElementById('fileLabel').innerText = "✅ Photo Ready"; };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function sendToGoogleTiles() {
-      // 1. Capture Data
-      const payload = {
-        brand: (document.getElementById('formBrandSelect').value === 'SPECIAL' ? document.getElementById('formBrandSpecial').value : document.getElementById('formBrandSelect').value).toUpperCase(),
-        code: document.getElementById('formCode').value.toUpperCase(),
-        ral: (selectedStandard === 'SPECIAL' ? "" : selectedStandard + " ") + document.getElementById('formColorText').value.toUpperCase(),
-        finish: (document.getElementById('formFinish').value === 'SPECIALTY' ? document.getElementById('formFinishSpecial').value : document.getElementById('formFinish').value).toUpperCase(),
-        qty: activeKilos + " kg",
-        image: currentBase64Image
-      };
-      
-      // 2. Perform Background Sync
-      fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) })
-        .then(() => console.log("Sync Complete"))
-        .catch(() => console.log("Sync Failed"));
-
-      // 3. Instant Reset for User
-      document.getElementById('formCode').value = "";
-      document.getElementById('formColorText').value = "";
-      document.getElementById('formBrandSelect').value = "AXALTA";
-      document.getElementById('formBrandSpecial').value = "";
-      document.getElementById('formFinish').value = "MATT";
-      document.getElementById('formFinishSpecial').value = "";
-      document.getElementById('formPhoto').value = "";
-      document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
-      currentBase64Image = "";
-      resetWeightCounter();
-      
-      // Notify user via console or small UI status
-      const status = document.getElementById('statusMessage');
-      status.style.display = "block";
-      status.innerText = "✅ Uploading in background...";
-      setTimeout(() => status.style.display = "none", 2000);
-    }
-  </script>
+  function press(v) {
+    const f = document.getElementById('color');
+    if(v==='BACK') f.value = f.value.slice(0,-1);
+    else f.value += v;
+  }
+  
+  function closePad() { document.getElementById('customKeypadWrapper').style.display = 'none'; }
+  
+  function upload() {
+    const payload = { brand: document.getElementById('brand').value, code: document.getElementById('color').value };
+    fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+    
+    document.getElementById('color').value = "";
+    const s = document.getElementById('lastSyncStatus');
+    s.style.opacity = "1";
+    setTimeout(() => s.style.opacity = "0", 2000);
+  }
+</script>
 </body>
 </html>
