@@ -22,236 +22,55 @@
       --input-bg: #0f172a;      
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0; padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding-top: 105px; 
-      padding-bottom: 40px;
-    }
+    body { background-color: var(--bg); color: var(--text); padding-top: 105px; padding-bottom: 40px; }
 
     header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background-color: #1e293b;
-      color: var(--text);
-      padding: 12px 16px;
-      z-index: 1000;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
+      position: fixed; top: 0; left: 0; right: 0; background-color: #1e293b; color: var(--text);
+      padding: 12px 16px; z-index: 1000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+      display: flex; flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid var(--border);
     }
+    header h1 { font-size: 1.3rem; font-weight: 800; }
+    .header-subtitle { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
 
-    header h1 { 
-      font-size: 1.3rem; 
-      font-weight: 800; 
-      letter-spacing: -0.3px;
-    }
+    .entry-form-container { background: var(--card-bg); margin: 12px auto; max-width: 600px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+    .form-grid { display: flex; flex-direction: column; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+    .form-control { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 1rem; background-color: var(--input-bg); color: var(--text); text-transform: uppercase; }
+    .form-control:focus { outline: none; border-color: var(--primary); }
+    
+    .no-native-keyboard { caret-color: transparent; cursor: pointer; }
 
-    .header-subtitle {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
+    .toggle-segment { display: flex; background: var(--input-bg); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+    .toggle-option { flex: 1; text-align: center; padding: 10px 0; font-weight: 700; cursor: pointer; border-radius: 6px; color: var(--text-muted); }
+    .toggle-option.active { background: var(--card-bg); color: var(--primary); }
 
-    .entry-form-container {
-      background: var(--card-bg);
-      margin: 12px auto;
-      max-width: 600px;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--border);
-    }
+    #specialBrandGroup, #specialFinishGroup, #customKeypadWrapper { margin-top: 8px; display: none; }
 
-    .entry-form-container h2 {
-      font-size: 1rem; margin-bottom: 14px; color: var(--text);
-      border-bottom: 1px solid var(--border); padding-bottom: 6px;
-    }
-
-    .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
-    .form-grid .form-group { display: flex; flex-direction: column; }
-    .form-grid .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
-
-    .form-control {
-      width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border);
-      font-size: 1rem; background-color: var(--input-bg); color: var(--text); text-transform: uppercase;
-    }
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .no-native-keyboard {
-      caret-color: transparent;
-      cursor: pointer;
-    }
-
-    select.form-control option {
-      background-color: var(--card-bg);
-      color: var(--text);
-    }
-
-    #specialBrandGroup, #specialFinishGroup, #customKeypadWrapper {
-      margin-top: 8px;
-      display: none;
-    }
-
-    .toggle-segment {
-      display: flex;
-      background: var(--input-bg);
-      padding: 4px;
-      border-radius: 8px;
-      width: 100%;
-      border: 1px solid var(--border);
-    }
-    .toggle-option {
-      flex: 1;
-      text-align: center;
-      padding: 10px 0;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      border-radius: 6px;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-    .toggle-option.active {
-      background: var(--card-bg);
-      color: var(--primary);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    /* --- SIDE-BY-SIDE KEYPAD INTERFACE --- */
-    .custom-keypad-layout {
-      display: grid;
-      grid-template-columns: 3fr 1fr;
-      gap: 8px;
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    .keypad-nums {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .keypad-alpha-strip {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .key-btn {
-      background: #334155;
-      color: var(--text);
-      border: none;
-      padding: 16px 0;
-      font-size: 1.25rem;
-      font-weight: 800;
-      border-radius: 6px;
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
-    }
+    .custom-keypad-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .keypad-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .keypad-alpha-strip { display: flex; flex-direction: column; gap: 8px; }
+    .key-btn { background: #334155; color: var(--text); border: none; padding: 16px 0; font-size: 1.25rem; font-weight: 800; border-radius: 6px; cursor: pointer; }
     .key-btn:active { background: #475569; }
-    
     .key-btn.btn-danger { background: #7f1d1d; color: #ef4444; }
-    .key-btn.btn-danger:active { background: #991b1b; }
-
-    .key-btn.btn-success { background: #14532d; color: #4ade80; border: 1px solid #166534; font-size: 1rem; }
-    .key-btn.btn-success:active { background: #166534; }
-    
+    .key-btn.btn-success { background: #14532d; color: #4ade80; }
     .key-btn.btn-alpha { background: #1e293b; color: #60a5fa; border: 1px solid var(--border); }
-    .key-btn.btn-alpha:active { background: #334155; }
 
-    /* --- WEIGHT CALCULATOR PANEL --- */
-    .weight-calculator {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-    }
-
-    .weight-display-wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed var(--border);
-    }
-
-    .weight-live-readout {
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: var(--primary);
-    }
-
-    .btn-clear-qty {
-      background: var(--border);
-      border: none;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 0.8rem;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .btn-clear-qty:active { background: #475569; }
-
-    .weight-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .weight-btn {
-      padding: 18px 0;
-      text-align: center;
-      border-radius: 8px;
-      font-size: 1.2rem;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      user-select: none;
-    }
-
-    .btn-plus { background: #1e3a8a; color: #60a5fa; border: 1px solid #1e40af; }
-    .weight-btn:active { opacity: 0.6; }
-
-    .file-input-wrapper { position: relative; display: inline-block; width: 100%; }
-    .file-input-label {
-      display: block; padding: 12px; background: var(--input-bg); color: var(--text);
-      border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.9rem;
-      cursor: pointer; border: 1px dashed var(--border);
-    }
+    .weight-calculator { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .weight-display-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px dashed var(--border); }
+    .weight-live-readout { font-size: 1.6rem; font-weight: 900; color: var(--primary); }
+    .btn-clear-qty { background: var(--border); border: none; color: var(--text); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .weight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .weight-btn { padding: 18px 0; border-radius: 8px; font-weight: 800; border: none; cursor: pointer; }
+    .btn-plus { background: #1e3a8a; color: #60a5fa; }
+    
+    .file-input-wrapper { position: relative; width: 100%; }
+    .file-input-label { display: block; padding: 12px; background: var(--input-bg); color: var(--text); border-radius: 6px; text-align: center; border: 1px dashed var(--border); cursor: pointer; }
     .hidden-file-input { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-    .btn-primary { 
-      background-color: var(--primary); color: white; width: 100%; padding: 14px; 
-      font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;
-      margin-top: 10px;
-      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
-    }
-    .btn-primary:disabled { background-color: var(--border); color: var(--text-muted); cursor: not-allowed; box-shadow: none; }
-
+    .btn-primary { background-color: var(--primary); color: white; width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; margin-top: 10px; }
     #statusMessage { text-align: center; margin-top: 10px; font-weight: 600; font-size: 0.9rem; display: none; }
   </style>
 </head>
@@ -263,9 +82,7 @@
   </header>
 
   <div class="entry-form-container">
-    <h2>Log Box Direct to Google Sheet</h2>
     <div class="form-grid">
-      
       <div class="form-group">
         <label>Manufacturer</label>
         <select id="formBrandSelect" class="form-control" onchange="checkSpecialBrand(this.value)">
@@ -276,9 +93,7 @@
           <option value="WITHAM">WITHAM</option>
           <option value="SPECIAL">SPECIAL (TYPE NEW)...</option>
         </select>
-        <div id="specialBrandGroup">
-          <input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE SPECIAL BRAND NAME...">
-        </div>
+        <div id="specialBrandGroup"><input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE SPECIAL BRAND NAME..."></div>
       </div>
       
       <div class="form-group">
@@ -302,33 +117,27 @@
         
         <div id="customKeypadWrapper">
           <div class="custom-keypad-layout">
-            
             <div class="keypad-nums">
               <button class="key-btn" type="button" onclick="pressKey('1')">1</button>
               <button class="key-btn" type="button" onclick="pressKey('2')">2</button>
               <button class="key-btn" type="button" onclick="pressKey('3')">3</button>
-
               <button class="key-btn" type="button" onclick="pressKey('4')">4</button>
               <button class="key-btn" type="button" onclick="pressKey('5')">5</button>
               <button class="key-btn" type="button" onclick="pressKey('6')">6</button>
-
               <button class="key-btn" type="button" onclick="pressKey('7')">7</button>
               <button class="key-btn" type="button" onclick="pressKey('8')">8</button>
               <button class="key-btn" type="button" onclick="pressKey('9')">9</button>
-
               <button class="key-btn btn-success" type="button" onclick="closeCustomKeypad()">✔️ DONE</button>
               <button class="key-btn" type="button" onclick="pressKey('0')">0</button>
               <button class="key-btn btn-danger" type="button" onclick="pressKey('BACK')">⌫</button>
             </div>
-
-            <div class="keypad-alpha-strip">
+            <div class="keypad-alpha-strip" id="alphaStrip">
               <button class="key-btn btn-alpha" type="button" onclick="pressKey('A')">A</button>
               <button class="key-btn btn-alpha" type="button" onclick="pressKey('B')">B</button>
               <button class="key-btn btn-alpha" type="button" onclick="pressKey('C')">C</button>
               <button class="key-btn btn-alpha" type="button" onclick="pressKey('D')">D</button>
               <button class="key-btn btn-alpha" type="button" onclick="pressKey('E')">E</button>
             </div>
-
           </div>
         </div>
       </div>
@@ -342,9 +151,7 @@
           <option value="PRIMER">PRIMER</option>
           <option value="SPECIALTY">SPECIALTY (TYPE CUSTOM)...</option>
         </select>
-        <div id="specialFinishGroup">
-          <input type="text" id="formFinishSpecial" class="form-control" placeholder="E.G. FINE TEXTURE, LEATHERETTE...">
-        </div>
+        <div id="specialFinishGroup"><input type="text" id="formFinishSpecial" class="form-control" placeholder="E.G. FINE TEXTURE, LEATHERETTE..."></div>
       </div>
       
       <div class="form-group">
@@ -376,195 +183,91 @@
 
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytJ6R-bqLhnk0uz4EaIdI-J4c7qJLjfnOCWr7PlaKvborAkkUBT2ko5h6D-waF8Nd_/exec";
-
     const RAL_LIST = ["1000","1001","1002","1003","1004","1005","1006","1007","1011","1012","1013","1014","1015","1016","1017","1018","1019","1020","1021","1023","1024","1027","1028","1032","1033","1034","2000","2001","2002","2003","2004","2008","2009","2010","2011","2012","3000","3001","3002","3003","3004","3005","3007","3009","3011","3012","3013","3014","3015","3016","3017","3018","3020","3022","3027","3031","4001","4002","4003","4004","4005","4006","4007","4008","4009","5000","5001","5002","5003","5004","5005","5007","5008","5009","5010","5011","5012","5013","5014","5015","5017","5018","5019","5020","5021","5022","5023","5024","6000","6001","6002","6003","6004","6005","6006","6007","6008","6009","6010","6011","6012","6013","6014","6015","6016","6017","6018","6019","6020","6021","6022","6024","6025","6026","6027","6028","6029","6032","6033","6034","7000","7001","7002","7003","7004","7005","7006","7008","7009","7010","7011","7012","7013","7015","7016","7021","7022","7023","7024","7026","7030","7031","7032","7033","7034","7035","7036","7037","7038","7039","7040","7042","7043","7044","8000","8001","8002","8003","8004","8007","8008","8011","8012","8014","8015","8016","8017","8019","8022","8023","8024","8025","8028","9001","9002","9003","9004","9005","9010","9011","9016","9017","9018"];
     const BS_LIST = ["00 A 01","00 A 05","00 A 09","00 A 13","02 C 33","02 C 37","02 C 39","02 C 40","04 B 15","04 B 17","04 B 21","04 C 31","04 C 33","04 C 37","04 C 39","04 D 44","04 D 45","04 E 49","04 E 51","04 E 53","04 E 55","04 E 56","04 E 58","06 C 35","06 C 37","06 C 39","06 C 40","06 D 43","06 D 45","06 E 50","06 E 51","06 E 56","08 B 15","08 B 17","08 B 29","08 C 31","08 C 35","08 C 37","08 D 41","08 E 51","08 E 55","10 A 03","10 B 15","10 B 17","10 B 23","10 B 25","10 C 31","10 C 33","10 C 35","10 C 39","10 D 43","10 D 45","10 E 49","10 E 50","10 E 53","12 B 15","12 B 17","12 B 21","12 B 25","12 C 31","12 C 33","12 C 37","12 D 45","12 E 55","12 F 51","14 C 31","14 C 35","14 C 39","14 C 40","14 E 49","14 E 50","14 E 51","14 E 53","16 C 37","16 D 45","16 E 53","18 B 17","18 B 21","18 B 25","18 C 31","18 C 35","18 C 39","18 E 49","18 E 50","18 E 51","18 E 53","20 C 33","20 C 37","20 C 40","20 D 45","20 E 51","20 E 53","20 E 56","22 B 15","22 B 17","22 D 41","22 D 45","24 C 33","24 C 39","24 E 53"];
 
-    let currentBase64Image = "";
-    let selectedStandard = "RAL";
-    let activeKilos = 0;
+    let currentBase64Image = "", selectedStandard = "RAL", activeKilos = 0;
 
-    window.addEventListener('DOMContentLoaded', () => {
-      setStandard('RAL'); 
-    });
+    window.addEventListener('DOMContentLoaded', () => setStandard('RAL'));
 
-    function checkSpecialBrand(value) {
-      const specialGroup = document.getElementById('specialBrandGroup');
-      specialGroup.style.display = (value === 'SPECIAL') ? 'block' : 'none';
-      if (value === 'SPECIAL') document.getElementById('formBrandSpecial').focus();
-    }
-
-    function checkSpecialFinish(value) {
-      const specialGroup = document.getElementById('specialFinishGroup');
-      specialGroup.style.display = (value === 'SPECIALTY') ? 'block' : 'none';
-      if (value === 'SPECIALTY') document.getElementById('formFinishSpecial').focus();
-    }
-
-    function openCustomKeypad() {
-      if (selectedStandard !== 'SPECIAL') {
-        document.getElementById('customKeypadWrapper').style.display = 'block';
-      }
-    }
-
-    function closeCustomKeypad() {
-      document.getElementById('customKeypadWrapper').style.display = 'none';
-    }
+    function checkSpecialBrand(v) { document.getElementById('specialBrandGroup').style.display = (v === 'SPECIAL') ? 'block' : 'none'; }
+    function checkSpecialFinish(v) { document.getElementById('specialFinishGroup').style.display = (v === 'SPECIALTY') ? 'block' : 'none'; }
+    function openCustomKeypad() { if (selectedStandard !== 'SPECIAL') document.getElementById('customKeypadWrapper').style.display = 'block'; }
+    function closeCustomKeypad() { document.getElementById('customKeypadWrapper').style.display = 'none'; }
 
     function setStandard(type) {
       selectedStandard = type;
       document.getElementById('optRal').classList.toggle('active', type === 'RAL');
       document.getElementById('optBs').classList.toggle('active', type === 'BS');
       document.getElementById('optSpecial').classList.toggle('active', type === 'SPECIAL');
+      document.getElementById('alphaStrip').style.display = (type === 'RAL') ? 'none' : 'flex';
       
-      const label = document.getElementById('colorLabel');
-      const inputField = document.getElementById('formColorText');
-      const datalist = document.getElementById('dynamicSuggestions');
-      
-      datalist.innerHTML = ""; 
-      inputField.value = ""; 
-      closeCustomKeypad();
+      const inputField = document.getElementById('formColorText'), datalist = document.getElementById('dynamicSuggestions');
+      datalist.innerHTML = ""; inputField.value = ""; closeCustomKeypad();
 
       if (type === 'SPECIAL') {
-        label.innerText = "Special Color Name";
-        inputField.placeholder = "TYPE COLOR NAME MANUALLY...";
-        inputField.readOnly = false; 
-        inputField.classList.remove("no-native-keyboard");
-        inputField.removeAttribute("list"); 
+        inputField.readOnly = false; inputField.removeAttribute("list");
       } else {
-        inputField.readOnly = true; 
-        inputField.classList.add("no-native-keyboard");
-        inputField.setAttribute("list", "dynamicSuggestions");
-        
-        const currentArray = (type === 'RAL') ? RAL_LIST : BS_LIST;
-        label.innerText = (type === 'RAL') ? "RAL Code" : "BS Code";
-        inputField.placeholder = "TAP HERE TO OPEN KEYPAD...";
-        
-        currentArray.forEach(color => {
-          let opt = document.createElement('option');
-          opt.value = color;
-          datalist.appendChild(opt);
-        });
+        inputField.readOnly = true; inputField.setAttribute("list", "dynamicSuggestions");
+        (type === 'RAL' ? RAL_LIST : BS_LIST).forEach(c => datalist.innerHTML += `<option value="${c}">`);
       }
     }
 
     function pressKey(val) {
       const field = document.getElementById('formColorText');
-      if (val === 'BACK') {
-        field.value = field.value.slice(0, -1);
-      } else {
-        if (selectedStandard === 'BS' && (field.value.length === 2 || field.value.length === 4)) {
-          field.value += " " + val;
-        } else {
-          field.value += val;
-        }
+      if (val === 'BACK') field.value = field.value.slice(0, -1);
+      else if (val === 'CLR') field.value = "";
+      else {
+        if (selectedStandard === 'BS' && (field.value.length === 2 || field.value.length === 4)) field.value += " " + val;
+        else field.value += val;
       }
       field.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
-    function modifyWeight(amount) {
-      activeKilos += amount;
-      document.getElementById('weightReadout').innerText = activeKilos + " kg";
-    }
-
-    function resetWeightCounter() {
-      activeKilos = 0;
-      document.getElementById('weightReadout').innerText = "0 kg";
-    }
-
+    function modifyWeight(a) { activeKilos += a; document.getElementById('weightReadout').innerText = activeKilos + " kg"; }
+    function resetWeightCounter() { activeKilos = 0; document.getElementById('weightReadout').innerText = "0 kg"; }
     function handlePhotoSelect() {
-      const fileInput = document.getElementById('formPhoto');
-      const label = document.getElementById('fileLabel');
-      if (fileInput.files && fileInput.files[0]) {
-        label.innerText = "⏳ Reading file...";
+      const file = document.getElementById('formPhoto').files[0];
+      if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          currentBase64Image = e.target.result;
-          label.innerText = "✅ Photo Ready";
-          label.style.background = "#1e3a8a";
-          label.style.borderColor = "#3b82f6";
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+        reader.onload = (e) => { currentBase64Image = e.target.result; document.getElementById('fileLabel').innerText = "✅ Photo Ready"; };
+        reader.readAsDataURL(file);
       }
     }
 
     function sendToGoogleTiles() {
-      let brand = document.getElementById('formBrandSelect').value;
-      if (brand === 'SPECIAL') brand = document.getElementById('formBrandSpecial').value.trim();
-      brand = brand.toUpperCase();
-
-      let finish = document.getElementById('formFinish').value;
-      if (finish === 'SPECIALTY') finish = document.getElementById('formFinishSpecial').value.trim();
-      finish = finish.toUpperCase();
-
-      const code = document.getElementById('formCode').value.trim().toUpperCase();
-      let colorVal = document.getElementById('formColorText').value.trim().toUpperCase();
-      
-      const btn = document.getElementById('submitBtn');
-      const status = document.getElementById('statusMessage');
-
-      if (!brand) { return alert("Please select or type a Manufacturer."); }
-      if (!colorVal || colorVal === "TAP HERE TO OPEN KEYPAD...") { return alert("Please specify a color code identity setting."); }
-      if (!finish) { return alert("Please select or type a Finish."); }
-      if (activeKilos === 0) { return alert("Please add weight in kilos before submitting."); }
-
-      btn.disabled = true;
-      btn.innerText = "⚡ Uploading Data...";
-      status.style.display = "block";
-      status.style.color = "#60a5fa";
-      status.innerText = "Sending row to Google Sheets & uploading image...";
-
-      const fullColorCodeString = (selectedStandard === 'SPECIAL') ? colorVal : `${selectedStandard} ${colorVal}`;
-      const dynamicWeightString = `${activeKilos} kg`;
-
+      // 1. Capture Data
       const payload = {
-        brand: brand,
-        code: code,
-        ral: fullColorCodeString,
-        finish: finish,
-        qty: dynamicWeightString, 
+        brand: (document.getElementById('formBrandSelect').value === 'SPECIAL' ? document.getElementById('formBrandSpecial').value : document.getElementById('formBrandSelect').value).toUpperCase(),
+        code: document.getElementById('formCode').value.toUpperCase(),
+        ral: (selectedStandard === 'SPECIAL' ? "" : selectedStandard + " ") + document.getElementById('formColorText').value.toUpperCase(),
+        finish: (document.getElementById('formFinish').value === 'SPECIALTY' ? document.getElementById('formFinishSpecial').value : document.getElementById('formFinish').value).toUpperCase(),
+        qty: activeKilos + " kg",
         image: currentBase64Image
       };
+      
+      // 2. Perform Background Sync
+      fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) })
+        .then(() => console.log("Sync Complete"))
+        .catch(() => console.log("Sync Failed"));
 
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        cache: "no-cache",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(() => {
-        status.style.color = "var(--success)";
-        status.innerText = "🎉 Successfully saved to Google Sheet!";
-        
-        document.getElementById('formCode').value = "";
-        document.getElementById('formColorText').value = "";
-        document.getElementById('formBrandSelect').value = "AXALTA";
-        document.getElementById('specialBrandGroup').style.display = 'none';
-        document.getElementById('formBrandSpecial').value = "";
-        
-        document.getElementById('formFinish').value = "MATT";
-        document.getElementById('specialFinishGroup').style.display = 'none';
-        document.getElementById('formFinishSpecial').value = "";
-        
-        document.getElementById('formPhoto').value = "";
-        document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
-        document.getElementById('fileLabel').style.background = "var(--input-bg)";
-        document.getElementById('fileLabel').style.borderColor = "var(--border)";
-        
-        currentBase64Image = "";
-        resetWeightCounter();
-        setStandard('RAL');
-      })
-      .catch(err => {
-        status.style.color = "var(--danger)";
-        status.innerText = "❌ Upload failed. Check internet connection.";
-        console.error(err);
-      })
-      .finally(() => {
-        btn.disabled = false;
-        btn.innerText = "☁️ Upload & Save Row";
-        setTimeout(() => { status.style.display = "none"; }, 4000);
-      });
+      // 3. Instant Reset for User
+      document.getElementById('formCode').value = "";
+      document.getElementById('formColorText').value = "";
+      document.getElementById('formBrandSelect').value = "AXALTA";
+      document.getElementById('formBrandSpecial').value = "";
+      document.getElementById('formFinish').value = "MATT";
+      document.getElementById('formFinishSpecial').value = "";
+      document.getElementById('formPhoto').value = "";
+      document.getElementById('fileLabel').innerText = "📷 Take Box Photo";
+      currentBase64Image = "";
+      resetWeightCounter();
+      
+      // Notify user via console or small UI status
+      const status = document.getElementById('statusMessage');
+      status.style.display = "block";
+      status.innerText = "✅ Uploading in background...";
+      setTimeout(() => status.style.display = "none", 2000);
     }
   </script>
 </body>
