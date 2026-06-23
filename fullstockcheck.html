@@ -3,113 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>StockCheck Pro</title>
+  <title>County Coatings - Full Stock Check</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <style>
     :root {
-      --primary: #2563eb; --accent: #8b5cf6; --bg: #020617;
-      --card: #0f172a; --text: #f1f5f9; --border: #1e293b;
+      --primary: #3b82f6; --danger: #ef4444; --success: #22c55e;
+      --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc;
+      --text-muted: #94a3b8; --border: #334155; --input-bg: #0f172a;
     }
-    body { background: var(--bg); color: var(--text); padding: 20px; padding-top: 100px; font-family: 'Inter', system-ui, sans-serif; }
-    header { position: fixed; top: 0; left: 0; right: 0; padding: 20px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); text-align: center; border-bottom: 1px solid var(--border); z-index: 1000; }
-    h1 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; }
-    #lastSyncStatus { font-size: 0.7rem; color: #4ade80; margin-top: 5px; opacity: 0; transition: 0.5s; font-weight: bold; }
-    
-    .card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); max-width: 450px; margin: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; font-size: 0.7rem; font-weight: 800; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .input-field { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--border); background: #020617; color: white; font-size: 1.1rem; font-weight: 600; }
-    
-    .toggle { display: flex; background: #020617; padding: 4px; border-radius: 12px; border: 2px solid var(--border); }
-    .t-opt { flex: 1; padding: 10px; text-align: center; font-size: 0.8rem; font-weight: bold; color: #64748b; cursor: pointer; border-radius: 8px; }
-    .t-opt.active { background: var(--primary); color: white; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg); color: var(--text); padding-top: 120px; padding-bottom: 40px; }
 
-    #customKeypadWrapper { width: 75%; margin: 15px auto; display: none; }
-    .keypad-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; }
-    .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .key-btn { background: #1e293b; border: none; padding: 14px; border-radius: 8px; color: white; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
-    .key-btn:active { background: var(--primary); }
-    .key-btn.alpha { background: #334155; color: #60a5fa; }
+    header { position: fixed; top: 0; left: 0; right: 0; background-color: #1e293b; padding: 12px; text-align: center; border-bottom: 1px solid var(--border); z-index: 1000; }
+    h1 { font-size: 1.3rem; font-weight: 800; }
+    .header-subtitle { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
     
-    .btn-main { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 800; font-size: 1rem; margin-top: 10px; }
+    /* Quick status indicator */
+    #lastSyncStatus { font-size: 0.75rem; color: var(--success); font-weight: 600; margin-top: 5px; opacity: 0; transition: opacity 0.5s; }
+
+    .entry-form-container { background: var(--card-bg); margin: 12px auto; max-width: 600px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 14px; }
+    label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
+    .form-control { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; }
+    
+    .toggle-segment { display: flex; background: var(--input-bg); padding: 4px; border-radius: 8px; border: 1px solid var(--border); }
+    .toggle-option { flex: 1; text-align: center; padding: 10px 0; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+    .toggle-option.active { background: var(--card-bg); color: var(--primary); }
+
+    .custom-keypad-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 8px; background: var(--input-bg); padding: 10px; border: 1px solid var(--border); border-radius: 8px; }
+    .keypad-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .key-btn { background: #334155; color: var(--text); border: none; padding: 16px 0; font-size: 1.25rem; font-weight: 800; border-radius: 6px; cursor: pointer; }
+    .btn-danger { background: #7f1d1d; color: #ef4444; }
+    .btn-success { background: #14532d; color: #4ade80; }
+    .btn-alpha { background: #1e293b; color: #60a5fa; }
+
+    .btn-plus { background: #1e3a8a; color: #60a5fa; padding: 18px; border: none; border-radius: 8px; font-weight: 800; width: 100%; }
+    .btn-primary { background: var(--primary); color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 700; margin-top: 10px; }
+    
+    #customKeypadWrapper, #specialBrandGroup, #specialFinishGroup { display: none; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>County Coatings</h1>
-  <div id="lastSyncStatus">PREVIOUS ENTRY UPLOADED</div>
-</header>
+  <header>
+    <h1>County Coatings</h1>
+    <div class="header-subtitle">Full Stock Check</div>
+    <div id="lastSyncStatus">PREVIOUS ENTRY UPLOADED</div>
+  </header>
 
-<div class="card">
-  <div class="form-group">
-    <label>Manufacturer</label>
-    <select id="brand" class="input-field"><option>AXALTA</option><option>THERMASET</option><option>HMG</option></select>
-  </div>
-
-  <div class="form-group">
-    <label>Standard</label>
-    <div class="toggle">
-      <div id="optRal" class="t-opt active" onclick="setStd('RAL')">RAL</div>
-      <div id="optBs" class="t-opt" onclick="setStd('BS')">BS</div>
+  <div class="entry-form-container">
+    <div class="form-group">
+      <label>Manufacturer</label>
+      <select id="formBrandSelect" class="form-control" onchange="document.getElementById('specialBrandGroup').style.display = (this.value==='SPECIAL'?'block':'none')">
+        <option>AXALTA</option><option>THERMASET</option><option>HMG</option><option>CROMADEX</option><option>WITHAM</option><option value="SPECIAL">SPECIAL...</option>
+      </select>
+      <div id="specialBrandGroup"><input type="text" id="formBrandSpecial" class="form-control" placeholder="TYPE BRAND..."></div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label>Color Code</label>
-    <input type="text" id="color" class="input-field" readonly placeholder="TAP TO OPEN KEYPAD" onclick="document.getElementById('customKeypadWrapper').style.display='block'">
-    
-    <div id="customKeypadWrapper">
-      <div class="keypad-grid">
-        <div class="nums">
-          <button class="key-btn" onclick="press('1')">1</button><button class="key-btn" onclick="press('2')">2</button><button class="key-btn" onclick="press('3')">3</button>
-          <button class="key-btn" onclick="press('4')">4</button><button class="key-btn" onclick="press('5')">5</button><button class="key-btn" onclick="press('6')">6</button>
-          <button class="key-btn" onclick="press('7')">7</button><button class="key-btn" onclick="press('8')">8</button><button class="key-btn" onclick="press('9')">9</button>
-          <button class="key-btn" style="background:#166534" onclick="closePad()">✔️</button><button class="key-btn" onclick="press('0')">0</button><button class="key-btn" style="background:#991b1b" onclick="press('BACK')">⌫</button>
-        </div>
-        <div id="alphaStrip" class="nums" style="grid-template-columns: 1fr; display: none;">
-          <button class="key-btn alpha" onclick="press('A')">A</button><button class="key-btn alpha" onclick="press('B')">B</button>
-          <button class="key-btn alpha" onclick="press('C')">C</button><button class="key-btn alpha" onclick="press('D')">D</button>
-          <button class="key-btn alpha" onclick="press('E')">E</button>
+    <div class="form-group">
+      <label>Stock Code</label>
+      <input type="text" id="formCode" class="form-control" placeholder="E.G. PF7016">
+    </div>
+
+    <div class="form-group">
+      <label>Standard</label>
+      <div class="toggle-segment">
+        <div class="toggle-option active" id="optRal" onclick="setStandard('RAL')">RAL</div>
+        <div class="toggle-option" id="optBs" onclick="setStandard('BS')">BS</div>
+        <div class="toggle-option" id="optSpecial" onclick="setStandard('SPECIAL')">SPECIAL</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label id="colorLabel">Code</label>
+      <input type="text" id="formColorText" class="form-control" readonly placeholder="TAP TO OPEN KEYPAD..." onclick="openKeypad()">
+      <div id="customKeypadWrapper">
+        <div class="custom-keypad-layout">
+          <div class="keypad-nums">
+            <button class="key-btn" type="button" onclick="press('1')">1</button><button class="key-btn" type="button" onclick="press('2')">2</button><button class="key-btn" type="button" onclick="press('3')">3</button>
+            <button class="key-btn" type="button" onclick="press('4')">4</button><button class="key-btn" type="button" onclick="press('5')">5</button><button class="key-btn" type="button" onclick="press('6')">6</button>
+            <button class="key-btn" type="button" onclick="press('7')">7</button><button class="key-btn" type="button" onclick="press('8')">8</button><button class="key-btn" type="button" onclick="press('9')">9</button>
+            <button class="key-btn btn-success" type="button" onclick="closeKeypad()">✔️</button><button class="key-btn" type="button" onclick="press('0')">0</button><button class="key-btn btn-danger" type="button" onclick="press('BACK')">⌫</button>
+          </div>
+          <div class="keypad-alpha-strip" id="alphaStrip">
+            <button class="key-btn btn-alpha" type="button" onclick="press('A')">A</button><button class="key-btn btn-alpha" type="button" onclick="press('B')">B</button>
+            <button class="key-btn btn-alpha" type="button" onclick="press('C')">C</button><button class="key-btn btn-alpha" type="button" onclick="press('D')">D</button>
+            <button class="key-btn btn-alpha" type="button" onclick="press('E')">E</button>
+          </div>
         </div>
       </div>
     </div>
+
+    <button class="btn-primary" type="button" onclick="submitData()">☁️ UPLOAD & SAVE</button>
   </div>
 
-  <button class="btn-main" onclick="upload()">☁️ UPLOAD & RESET</button>
-</div>
+  <script>
+    const GOOGLE_SCRIPT_URL = "YOUR_URL_HERE"; 
+    let activeKilos = 0, selectedStandard = 'RAL';
 
-<script>
-  let mode = 'RAL';
-  const GOOGLE_URL = "YOUR_DEPLOYMENT_URL_HERE";
-
-  function setStd(m) {
-    mode = m;
-    document.getElementById('optRal').classList.toggle('active', m==='RAL');
-    document.getElementById('optBs').classList.toggle('active', m==='BS');
-    document.getElementById('alphaStrip').style.display = (m==='RAL') ? 'none' : 'grid';
-    document.getElementById('color').value = "";
-  }
-
-  function press(v) {
-    const f = document.getElementById('color');
-    if(v==='BACK') f.value = f.value.slice(0,-1);
-    else f.value += v;
-  }
-  
-  function closePad() { document.getElementById('customKeypadWrapper').style.display = 'none'; }
-  
-  function upload() {
-    const payload = { brand: document.getElementById('brand').value, code: document.getElementById('color').value };
-    fetch(GOOGLE_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+    function setStandard(t) {
+      selectedStandard = t;
+      document.getElementById('optRal').classList.toggle('active', t==='RAL');
+      document.getElementById('optBs').classList.toggle('active', t==='BS');
+      document.getElementById('optSpecial').classList.toggle('active', t==='SPECIAL');
+      document.getElementById('alphaStrip').style.display = (t === 'RAL') ? 'none' : 'flex';
+      document.getElementById('formColorText').value = "";
+    }
+    function openKeypad() { if(selectedStandard !== 'SPECIAL') document.getElementById('customKeypadWrapper').style.display = 'block'; }
+    function closeKeypad() { document.getElementById('customKeypadWrapper').style.display = 'none'; }
+    function press(v) {
+      const f = document.getElementById('formColorText');
+      if(v==='BACK') f.value = f.value.slice(0, -1);
+      else if(selectedStandard === 'RAL' && ['A','B','C','D','E'].includes(v)) return;
+      else f.value += v;
+    }
     
-    document.getElementById('color').value = "";
-    const s = document.getElementById('lastSyncStatus');
-    s.style.opacity = "1";
-    setTimeout(() => s.style.opacity = "0", 2000);
-  }
-</script>
+    function submitData() {
+      const payload = {
+        brand: document.getElementById('formBrandSelect').value,
+        code: document.getElementById('formCode').value,
+        color: document.getElementById('formColorText').value,
+        qty: activeKilos
+      };
+      
+      // Send background sync
+      fetch(GOOGLE_SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) })
+        .then(() => {
+          const status = document.getElementById('lastSyncStatus');
+          status.style.opacity = "1";
+          setTimeout(() => status.style.opacity = "0", 3000);
+        });
+      
+      // Immediate Reset
+      document.getElementById('formCode').value = "";
+      document.getElementById('formColorText').value = "";
+      activeKilos = 0;
+    }
+  </script>
 </body>
 </html>
