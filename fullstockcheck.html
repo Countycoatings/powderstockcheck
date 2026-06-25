@@ -106,6 +106,7 @@
     }
 
     .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+    .form-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
     .form-group { display: flex; flex-direction: column; position: relative; }
     .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
 
@@ -179,7 +180,6 @@
     }
     .key-btn:active { background: #475569; }
     
-    /* Small letter indicator inside the long-press button layouts */
     .key-btn .letter-hint {
       position: absolute;
       top: 4px; right: 6px;
@@ -251,7 +251,6 @@
     <div class="header-subtitle">Full Stock Check</div>
   </header>
 
-  <!-- Small background-sync alert notice block layout -->
   <div id="syncToast" class="toast-banner">☁️ Syncing entry in background...</div>
 
   <div class="entry-form-container">
@@ -287,33 +286,50 @@
         </div>
       </div>
 
-      <!-- Color Field Box (Only trigger keypad visibility on direct click action rule) -->
+      <!-- Color Field Box -->
       <div class="form-group">
         <label id="colorLabel">RAL Code</label>
         <input type="text" id="formColorText" class="form-control no-native-keyboard" placeholder="CLICK BOX TO OPEN KEYPAD..." readonly onclick="openCustomKeypad()">
         
-        <!-- COMPACT 4-ROW SCREEN STRETCH KEYPAD DESIGN LAYER -->
+        <!-- COMPACT 4-ROW KEYPAD -->
         <div id="customKeypadWrapper">
           <div class="custom-keypad">
             <!-- Row 1 -->
-            <button class="key-btn" onmousedown="startKeyHold('1', 'A')" onmouseup="endKeyHold('1', 'A')" ontouchstart="startKeyHold('1', 'A')" ontouchend="endKeyHold('1', 'A')">1<span class="letter-hint">A</span></button>
-            <button class="key-btn" onmousedown="startKeyHold('2', 'B')" onmouseup="endKeyHold('2', 'B')" ontouchstart="startKeyHold('2', 'B')" ontouchend="endKeyHold('2', 'B')">2<span class="letter-hint">B</span></button>
-            <button class="key-btn" onmousedown="startKeyHold('3', 'C')" onmouseup="endKeyHold('3', 'C')" ontouchstart="startKeyHold('3', 'C')" ontouchend="endKeyHold('3', 'C')">3<span class="letter-hint">C</span></button>
+            <button class="key-btn" 
+                    onmousedown="handlePressStart(event, '1', 'A')" onmouseup="handlePressEnd(event, '1', 'A')"
+                    ontouchstart="handlePressStart(event, '1', 'A')" ontouchend="handlePressEnd(event, '1', 'A')">1<span class="letter-hint">A</span></button>
+            <button class="key-btn" 
+                    onmousedown="handlePressStart(event, '2', 'B')" onmouseup="handlePressEnd(event, '2', 'B')"
+                    ontouchstart="handlePressStart(event, '2', 'B')" ontouchend="handlePressEnd(event, '2', 'B')">2<span class="letter-hint">B</span></button>
+            <button class="key-btn" 
+                    onmousedown="handlePressStart(event, '3', 'C')" onmouseup="handlePressEnd(event, '3', 'C')"
+                    ontouchstart="handlePressStart(event, '3', 'C')" ontouchend="handlePressEnd(event, '3', 'C')">3<span class="letter-hint">C</span></button>
 
             <!-- Row 2 -->
-            <button class="key-btn" onmousedown="startKeyHold('4', 'D')" onmouseup="endKeyHold('4', 'D')" ontouchstart="startKeyHold('4', 'D')" ontouchend="endKeyHold('4', 'D')">4<span class="letter-hint">D</span></button>
-            <button class="key-btn" onmousedown="startKeyHold('5', 'E')" onmouseup="endKeyHold('5', 'E')" ontouchstart="startKeyHold('5', 'E')" ontouchend="endKeyHold('5', 'E')">5<span class="letter-hint">E</span></button>
-            <button class="key-btn" onclick="pressDirectKey('6')">6</button>
+            <button class="key-btn" 
+                    onmousedown="handlePressStart(event, '4', 'D')" onmouseup="handlePressEnd(event, '4', 'D')"
+                    ontouchstart="handlePressStart(event, '4', 'D')" ontouchend="handlePressEnd(event, '4', 'D')">4<span class="letter-hint">D</span></button>
+            <button class="key-btn" 
+                    onmousedown="handlePressStart(event, '5', 'E')" onmouseup="handlePressEnd(event, '5', 'E')"
+                    ontouchstart="handlePressStart(event, '5', 'E')" ontouchend="handlePressEnd(event, '5', 'E')">5<span class="letter-hint">E</span></button>
+            <button class="key-btn" 
+                    onmousedown="handleDirectPress(event, '6')" ontouchstart="handleDirectPress(event, '6')">6</button>
 
             <!-- Row 3 -->
-            <button class="key-btn" onclick="pressDirectKey('7')">7</button>
-            <button class="key-btn" onclick="pressDirectKey('8')">8</button>
-            <button class="key-btn" onclick="pressDirectKey('9')">9</button>
+            <button class="key-btn" 
+                    onmousedown="handleDirectPress(event, '7')" ontouchstart="handleDirectPress(event, '7')">7</button>
+            <button class="key-btn" 
+                    onmousedown="handleDirectPress(event, '8')" ontouchstart="handleDirectPress(event, '8')">8</button>
+            <button class="key-btn" 
+                    onmousedown="handleDirectPress(event, '9')" ontouchstart="handleDirectPress(event, '9')">9</button>
 
             <!-- Row 4 -->
-            <button class="key-btn btn-danger" onclick="pressDirectKey('CLR')">CLEAR</button>
-            <button class="key-btn" onclick="pressDirectKey('0')">0</button>
-            <button class="key-btn btn-enter" onclick="closeCustomKeypad()">ENTER</button>
+            <button class="key-btn btn-danger" 
+                    onmousedown="handleDirectPress(event, 'CLR')" ontouchstart="handleDirectPress(event, 'CLR')">CLEAR</button>
+            <button class="key-btn" 
+                    onmousedown="handleDirectPress(event, '0')" ontouchstart="handleDirectPress(event, '0')">0</button>
+            <button class="key-btn btn-enter" 
+                    onmousedown="handleDirectPress(event, 'ENT')" ontouchstart="handleDirectPress(event, 'ENT')">ENTER</button>
           </div>
         </div>
       </div>
@@ -355,7 +371,6 @@
       </div>
     </div>
     
-    <!-- Updated Master Submittal Option Name Configuration Label -->
     <button class="btn-primary" id="submitBtn" onclick="sendToGoogleTiles()">Enter Stock</button>
   </div>
 
@@ -366,9 +381,10 @@
     let selectedStandard = "RAL";
     let activeKilos = 0;
     
-    // Long press variable monitors
+    // Long press machinery
     let holdTimer = null;
-    let isLongPressActionTriggered = false;
+    let isLongPressTriggered = false;
+    let hasTouchStarted = false; 
     const HOLD_DURATION_MS = 500; 
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -412,7 +428,6 @@
       }
     }
 
-    /* --- KEYPAD FOCUS CONTROL RULES --- */
     function openCustomKeypad() {
       if (selectedStandard !== 'SPECIAL') {
         document.getElementById('customKeypadWrapper').style.display = "block";
@@ -423,31 +438,54 @@
       document.getElementById('customKeypadWrapper').style.display = "none";
     }
 
-    /* --- LONG PRESS LOGIC DEPLOYMENT --- */
-    function startKeyHold(numValue, letterValue) {
-      isLongPressActionTriggered = false;
+    /* --- ANTI-GHOSTING INPUT HANDLERS --- */
+    function handlePressStart(e, numValue, letterValue) {
+      // If it's a touch event, flag it and stop standard mouse emulation completely
+      if (e.type === 'touchstart') {
+        hasTouchStarted = true;
+      } else if (e.type === 'mousedown' && hasTouchStarted) {
+        // Blocks trailing ghost clicks on mobile screens
+        return;
+      }
       
-      if(holdTimer) clearTimeout(holdTimer);
+      isLongPressTriggered = false;
+      if (holdTimer) clearTimeout(holdTimer);
       
       holdTimer = setTimeout(() => {
-        isLongPressActionTriggered = true;
+        isLongPressTriggered = true;
         appendCharacterValue(letterValue);
       }, HOLD_DURATION_MS);
     }
 
-    function endKeyHold(numValue, letterValue) {
-      if(holdTimer) clearTimeout(holdTimer);
+    function handlePressEnd(e, numValue, letterValue) {
+      if (e.type === 'touchend') {
+        e.preventDefault(); // Kills simulated click sequence instantly
+      } else if (e.type === 'mouseup' && hasTouchStarted) {
+        hasTouchStarted = false;
+        return;
+      }
+
+      if (holdTimer) clearTimeout(holdTimer);
       
-      // If the time threshold was not passed, execute standard numerical digit routing rule
-      if (!isLongPressActionTriggered) {
+      if (!isLongPressTriggered) {
         appendCharacterValue(numValue);
       }
-      isLongPressActionTriggered = false;
+      isLongPressTriggered = false;
     }
 
-    function pressDirectKey(val) {
+    function handleDirectPress(e, val) {
+      if (e.type === 'touchstart') {
+        hasTouchStarted = true;
+      } else if (e.type === 'mousedown' && hasTouchStarted) {
+        return;
+      }
+
+      if (e.type === 'touchend') e.preventDefault();
+
       if (val === 'CLR') {
         document.getElementById('formColorText').value = "";
+      } else if (val === 'ENT') {
+        closeCustomKeypad();
       } else {
         appendCharacterValue(val);
       }
@@ -483,7 +521,6 @@
       }
     }
 
-    /* --- MANDATORY SHEET DATA VALIDATION & SYNC CODES --- */
     function sendToGoogleTiles() {
       let brand = document.getElementById('formBrandSelect').value;
       if (brand === 'SPECIAL') brand = document.getElementById('formBrandSpecial').value.trim();
@@ -496,7 +533,7 @@
       const code = document.getElementById('formCode').value.trim().toUpperCase();
       let colorVal = document.getElementById('formColorText').value.trim().toUpperCase();
 
-      // STRICT VALIDATION STEP CHECKS BEFORE RUNNING BACKGROUND CODE
+      // VALIDATION CHECKS
       if (!brand || brand === "SPECIAL (TYPE NEW)...") { return alert("⚠️ Operational Error: Manufacturer input field cannot be left empty."); }
       if (!code) { return alert("⚠️ Operational Error: Stock Code cannot be left blank."); }
       if (!colorVal || colorVal === "CLICK BOX TO OPEN KEYPAD...") { return alert("⚠️ Operational Error: Color Identify specification code is required."); }
@@ -516,25 +553,23 @@
         image: currentBase64Image
       };
 
-      // 1. Reveal Subheader Notification Bar
+      // 1. Trigger Small Subheader Sync Banner
       const toast = document.getElementById('syncToast');
       toast.style.display = "block";
-      
-      // Automatically fade toast away out of view after 3 seconds
       setTimeout(() => {
         toast.style.display = "none";
       }, 3000);
 
-      // 2. Background Asynchronous Thread Transfer (Fire-and-Forget Mode)
+      // 2. Fire Background Transfer Request
       fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         cache: "no-cache",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      }).catch(err => console.error("Cloud Thread Sync Abort Log:", err));
+      }).catch(err => console.error("Cloud Sync Abort:", err));
 
-      // 3. Instantaneous Application Interface Reset Wipes
+      // 3. Instant UI Reset
       document.getElementById('formCode').value = "";
       document.getElementById('formColorText').value = "";
       document.getElementById('formBrandSelect').value = "AXALTA";
